@@ -4,6 +4,9 @@ import { RestrictProperties } from 'src/common/dtos/common.input'
 
 @ObjectType()
 export class Admin implements RestrictProperties<Admin,AdminType> {
+    uid: string
+    createdAt: Date
+    updatedAt: Date
     // Todo Add below to make optional fields optional.
     // @Field({ nullable: true })
 }

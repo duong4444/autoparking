@@ -19,6 +19,9 @@ export class UserWhereInputStrict
       Omit<Prisma.UserWhereInput, 'Credentials' | 'AuthProvider' | 'Admin' | 'image'>
     >
 {
+  Manager: (Prisma.Without<Prisma.ManagerNullableScalarRelationFilter, Prisma.ManagerWhereInput> & Prisma.ManagerWhereInput) | (Prisma.Without<Prisma.ManagerWhereInput, Prisma.ManagerNullableScalarRelationFilter> & Prisma.ManagerNullableScalarRelationFilter) | null;
+  Valet: (Prisma.Without<Prisma.ValetNullableScalarRelationFilter, Prisma.ValetWhereInput> & Prisma.ValetWhereInput) | (Prisma.Without<Prisma.ValetWhereInput, Prisma.ValetNullableScalarRelationFilter> & Prisma.ValetNullableScalarRelationFilter) | null;
+  Customer: (Prisma.Without<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> & Prisma.CustomerWhereInput) | (Prisma.Without<Prisma.CustomerWhereInput, Prisma.CustomerNullableScalarRelationFilter> & Prisma.CustomerNullableScalarRelationFilter) | null;
   uid: StringFilter;
   createdAt: DateTimeFilter;
   updatedAt: DateTimeFilter;

@@ -43,24 +43,24 @@ export class AdminsController {
   }
 
   @ApiOkResponse({ type: AdminEntity })
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.prisma.admin.findUnique({ where: { id } })
+  @Get(':uid')
+  findOne(@Param('uid') uid: string) {
+    return this.prisma.admin.findUnique({ where: { uid } })
   }
 
   @ApiOkResponse({ type: AdminEntity })
   @ApiBearerAuth()
   @AllowAuthenticated()
-  @Patch(':id')
+  @Patch(':uid')
   async update(
-    @Param('id') id: number,
+    @Param('id') uid: string,
     @Body() updateAdminDto: UpdateAdmin,
     @GetUser() user: GetUserType,
   ) {
-    const admin = await this.prisma.admin.findUnique({ where: { id } })
-    checkRowLevelPermission(user, admin.uid)
+    const adminInfo = await this.prisma.admin.findUnique({ where: { uid } })
+    checkRowLevelPermission(user, adminInfo?.uid)
     return this.prisma.admin.update({
-      where: { id },
+      where: { uid },
       data: updateAdminDto,
     })
   }
@@ -68,9 +68,9 @@ export class AdminsController {
   @ApiBearerAuth()
   @AllowAuthenticated()
   @Delete(':id')
-  async remove(@Param('id') id: number, @GetUser() user: GetUserType) {
-    const admin = await this.prisma.admin.findUnique({ where: { id } })
-    checkRowLevelPermission(user, admin.uid)
-    return this.prisma.admin.delete({ where: { id } })
+  async remove(@Param('uid') uid: string, @GetUser() user: GetUserType) {
+    const adminInfo = await this.prisma.admin.findUnique({ where: { uid } })
+    checkRowLevelPermission(user, adminInfo?.uid)
+    return this.prisma.admin.delete({ where: { uid } })
   }
 }

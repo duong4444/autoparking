@@ -3,6 +3,6 @@ import { CreateAdmin } from './create.dto'
 import { Admin } from '@prisma/client'
 
 export class UpdateAdmin extends PartialType(CreateAdmin) {
-  id: Admin['id']
+  uid: Admin['uid']
 }
 
