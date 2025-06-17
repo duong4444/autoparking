@@ -4,5 +4,5 @@ import { Manager } from '@prisma/client'
 
 @InputType()
 export class UpdateManagerInput extends PartialType(CreateManagerInput) {
-  id: Manager['id']
+  uid: Manager['uid']
 }

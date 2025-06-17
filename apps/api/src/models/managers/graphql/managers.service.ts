@@ -22,9 +22,9 @@ export class ManagersService {
   }
 
   update(updateManagerInput: UpdateManagerInput) {
-    const { id, ...data } = updateManagerInput
+    const { uid, ...data } = updateManagerInput
     return this.prisma.manager.update({
-      where: { id },
+      where: { uid },
       data: data,
     })
   }

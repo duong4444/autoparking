@@ -6,6 +6,9 @@ import {
 } from '@nestjs/graphql';
 import { Prisma } from '@prisma/client';
 import { RestrictProperties } from 'src/common/dtos/common.input';
+import { CustomerOrderByWithRelationInput } from 'src/models/customers/graphql/dtos/order-by.args';
+import { ManagerOrderByWithRelationInput } from 'src/models/managers/graphql/dtos/order-by.args';
+import { ValetOrderByWithRelationInput } from 'src/models/valets/graphql/dtos/order-by.args';
 
 registerEnumType(Prisma.SortOrder, {
   name: 'SortOrder',
@@ -22,9 +25,9 @@ export class UserOrderByWithRelationInputStrict
       >
     >
 {
-  Manager: Prisma.ManagerOrderByWithRelationInput;
-  Valet: Prisma.ValetOrderByWithRelationInput;
-  Customer: Prisma.CustomerOrderByWithRelationInput;
+  Manager: ManagerOrderByWithRelationInput;
+  Valet: ValetOrderByWithRelationInput;
+  Customer: CustomerOrderByWithRelationInput;
   @Field(() => Prisma.SortOrder)
   uid: Prisma.SortOrder;
 
