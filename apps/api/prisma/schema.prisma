@@ -13,27 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model Người dùng và phân quyền: [User,Admin,Manager,Valet,Customer]
+// model Xác thực: [Credentials,AuthProvider]
+// model Kinh doanh cốt lõi: [Company,Garage,Address,Slot]
+// model Nghiệp vụ và đặt chỗ: [Booking,BookingTimeline,ValetAssignment]
+// model hỗ trợ: [Verification,Review]
+
 model User {
-  uid       String   @id
+  uid       String   @id // primary key
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String?
+  name  String?
   image String?
 
   Credentials  Credentials?
   AuthProvider AuthProvider?
   Admin        Admin?
+  Manager      Manager?
+  Valet        Valet?
+  Customer     Customer?
 }
 
 model Admin {
   uid  String @id
   User User   @relation(fields: [uid], references: [uid])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Verifications Verification[] // có phê duyệt
 }
 
+// track phê duyệt garage bởi Admin
+model Verification {
+  createdAt DateTime @default(now())
+  updated   DateTime @updatedAt
+
+  verified Boolean @default(false)
+
+  adminId String // admin thực hiện phê duyệt
+  Admin   Admin  @relation(fields: [adminId], references: [uid])
+
+  garageId Int    @id // garage đc phê duyệt
+  Garage   Garage @relation(fields: [garageId], references: [id])
+}
+
+//1-1 vs User
 model Credentials {
   uid  String @id
   User User   @relation(fields: [uid], references: [uid])
@@ -45,6 +70,7 @@ model Credentials {
   updatedAt DateTime @updatedAt
 }
 
+//1-1 vs User
 model AuthProvider {
   uid String @id
 
@@ -52,7 +78,243 @@ model AuthProvider {
   User User             @relation(fields: [uid], references: [uid])
 }
 
+// có thể  tạo booking và review
+model Customer {
+  uid  String @id
+  User User   @relation(fields: [uid], references: [uid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName String?
+
+  Booking Booking[] //danh sách các Booking
+  Reviews Review[] // danh sách các review
+}
+
+// chủ bãi đỗ , có liên kết vs Company
+model Manager {
+  uid  String @id
+  User User   @relation(fields: [uid], references: [uid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName     String?
+  companyId       Int?              @unique // 1-1 với Company
+  Company         Company?          @relation(fields: [companyId], references: [id])
+  BookingTimeLine BookingTimeline[] // 1-n, có thể update trạng thái booking
+}
+
+// store review của customer
+model Review {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rating  Int     @default(0)
+  comment String?
+
+  customerId String // 1 review thuộc 1 customer
+  Customer   Customer @relation(fields: [customerId], references: [uid])
+
+  garageId Int // 1 review thuộc 1 về 1 garage
+  Garage   Garage @relation(fields: [garageId], references: [id])
+}
+
+// thuộc 1 Comapny, có thông tin bằng lái,
+// valet 1-n valet_assignment
+model Valet {
+  uid  String @id
+  User User   @relation(fields: [uid], references: [uid])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName String
+  image       String?
+  licenceID   String  @default("")
+
+  companyId       Int? //1 valet thuộc 1 công ty
+  Company         Company?          @relation(fields: [companyId], references: [id])
+  BookingTimeline BookingTimeline[] // 1 valet có nhiều booking_timeline
+
+  // trường PickupAssignment là mảng chứa tất cả bản ghi ValetAssignment
+  // mà pickupValetId của chúng khớp với uid của valet đó
+  // tên quan hệ "PickupValet" dùng để liên kết PickupAssignment với pickupValetId
+  // phải khớp trong model ValetAssignment
+  PickupAssignments ValetAssignment[] @relation("PickupValet")
+
+  // trường ReturnAssignment là mảng chứa tất cả bản ghi ValetAssignment
+  // mà returnValetId của chúng khớp với uid của valet đó
+  // tên quan hệ "ReturnValet" dùng để liên kết ReturnAssignment với returnValetId
+  // phải khớp trong model ValetAssignment
+  ReturnAssignments ValetAssignment[] @relation("ReturnValet")
+  //valet có thể có nhiểu assignment , vs vai trò là pickup hoặc return
+
+  @@unique([companyId, uid]) // không có bản ghi trùng lặp cho cặp companyId,uid
+  //đã có {companyId: "abc",uid:"foo"} thì ko thể thêm {companyId: "abc",uid:"foo"}
+ }
+
+// ValetAssignment có 2 tham chiếu đến Valet (valetId_trả & valetId_nhận)
+//prisma cần tên quan hệ ("PickupValet","ReturnValet") để biết
+// trường nào trong ValetAssignment liên kết vs trường nào trong Valet
+
+// quản lý nhiệm vụ valet (đón và trả xe) cho 1 booking
+// pickupValetId và returnValetId liên kết tới uid trong Valet
+model ValetAssignment {
+  bookingId Int     @id // 1-1 gán với booking cụ thể
+  Booking   Booking @relation(fields: [bookingId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pickupLat Float?
+  pickupLng Float?
+  returnLat Float?
+  returnLng Float?
+
+  // có thể có 2 valet riêng cho pickup và return
+  pickupValetId String? // tham chiếu đến uid trong Valet,(xác định valet nhận xe)
+  // tên quan hệ PickupValet
+  PickupValet   Valet?  @relation("PickupValet", fields: [pickupValetId], references: [uid])
+  // tên quan hệ ReturnValet
+  returnValetId String? // tham chiếu đến uid trong Valet,(xác định valet trả xe)
+  ReturnValet   Valet?  @relation("ReturnValet", fields: [returnValetId], references: [uid])
+}
+
+// booking của customer cho vị trí cụ thể
+// quản lý parking booking
+model Booking {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pricePerHour  Float?
+  totalPrice    Float?
+  startTime     DateTime
+  endTime       DateTime
+  vehicleNumber String
+  phoneNumber   String?
+  passcode      String?
+  status        BookingStatus @default(BOOKED)
+
+  slotId Int // n-1, 1 slot có nhiều booking, 1 booking có 1 slot
+  Slot   Slot @relation(fields: [slotId], references: [id])
+
+  customerId String // n-1, 1 customer có nhiều booking, 1 booking thuộc về 1 customer
+  Customer   Customer @relation(fields: [customerId], references: [uid])
+
+  ValetAssignment ValetAssignment? // 1-1, 1 booking gắn vs 1 valet_assignment
+  BookingTimeline BookingTimeline[] // 1-n, 1 booking có nhiều booking_timeline
+
+  @@index([startTime, endTime]) // tăng performance,tốc độ truy vấn
+}
+
+// có thể có nhiều garage,manager,valet
+model Company {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName String?
+  description String?
+
+  Garages  Garage[]
+  Managers Manager[]
+  Valets   Valet[]
+}
+
+model Garage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName String?
+  description String?
+  images      String[]
+
+  companyId    Int //1-1
+  Company      Company       @relation(fields: [companyId], references: [id])
+  Address      Address? //1-1
+  Verification Verification? // phê duyệt bởi admin
+  Reviews      Review[] // có nhiều review
+  Slots        Slot[] // có nhiều slot
+}
+
+// lưu thông tin địa chỉ chi tiết của Garage , kinh độ,vĩ độ
+model Address {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  address String
+  lat     Float
+  lng     Float
+
+  garageId Int    @unique
+  Garage   Garage @relation(fields: [garageId], references: [id])
+}
+
+// vị trí đỗ xe cụ thể trong Garage
+model Slot {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  displayName  String?
+  pricePerHour Float
+
+  length Int?
+  width  Int?
+  height Int?
+
+  type SlotType @default(CAR)
+
+  garageId Int
+  Garage   Garage    @relation(fields: [garageId], references: [id])
+  Bookings Booking[]
+}
+
+// theo dõi lịch sử booking
+// mỗi khi trạng thá của Booking thay đổi , 1 bản ghi mới sẽ đc tạo trong BookingTimeline
+// người thực hiện thay dổi Valet | Manager
+model BookingTimeline {
+  id Int @id @default(autoincrement())
+
+  timestamp DateTime      @default(now())
+  status    BookingStatus
+
+  bookingId Int
+  Booking   Booking @relation(fields: [bookingId], references: [id])
+
+  valetId String?
+  Valet   Valet?  @relation(fields: [valetId], references: [uid])
+
+  managerId String?
+  Manager   Manager? @relation(fields: [managerId], references: [uid])
+
+  @@index([bookingId]) //yêu cầu db tạo index
+}
+
 enum AuthProviderType {
   GOOGLE
   CREDENTIALS
+}
+
+enum SlotType {
+  CAR
+  HEAVY
+  BIKE
+  BICYCLE
+}
+
+enum BookingStatus {
+  BOOKED
+  VALET_ASSIGNED_FOR_CHECK_IN
+  VALET_PICKED_UP
+  CHECKED_IN
+  VALET_ASSIGNED_FOR_CHECK_OUT
+  CHECKED_OUT
+  VALET_RETURNED
 }
