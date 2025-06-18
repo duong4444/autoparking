@@ -30,7 +30,7 @@ export class RegisterWithCredentialsInput {
   image?: string;
 }
 
-@InputType() // kieu dlieu dau vao
+@InputType() // kieu dlieu dau vao // <=> input LoginInput
 export class LoginInput extends PickType(RegisterWithCredentialsInput, [
   'email',
   'password',
@@ -40,3 +40,4 @@ export class LoginInput extends PickType(RegisterWithCredentialsInput, [
 export class LoginOutput {
   token: string;
 }
+// <=> type LoginOutput

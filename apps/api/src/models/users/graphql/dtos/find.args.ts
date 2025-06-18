@@ -8,7 +8,6 @@ import { Prisma, $Enums } from '@prisma/client';
 import { UserOrderByWithRelationInput } from './order-by.args';
 import { UserWhereInput, UserWhereUniqueInput } from './where.args';
 import { RestrictProperties } from 'src/common/dtos/common.input';
-import { DefaultArgs } from '@prisma/client/runtime/library';
 
 registerEnumType(Prisma.UserScalarFieldEnum, {
   name: 'UserScalarFieldEnum',
