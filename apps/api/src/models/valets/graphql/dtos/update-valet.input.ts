@@ -4,5 +4,5 @@ import { Valet } from '@prisma/client'
 
 @InputType()
 export class UpdateValetInput extends PartialType(CreateValetInput) {
-  id: Valet['id']
+  uid: Valet['uid']
 }

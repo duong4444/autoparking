@@ -3,6 +3,6 @@ import { CreateValet } from './create.dto'
 import { Valet } from '@prisma/client'
 
 export class UpdateValet extends PartialType(CreateValet) {
-  id: Valet['id']
+  uid: Valet['uid']
 }
 

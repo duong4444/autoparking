@@ -34,8 +34,8 @@ export class ValetsResolver {
   @AllowAuthenticated()
   @Mutation(() => Valet)
   async updateValet(@Args('updateValetInput') args: UpdateValetInput, @GetUser() user: GetUserType) {
-    const valet = await this.prisma.valet.findUnique({ where: { id: args.id } })
-    checkRowLevelPermission(user, valet.uid)
+    const valet = await this.prisma.valet.findUnique({ where: { uid: args.uid } })
+    checkRowLevelPermission(user, valet?.uid)
     return this.valetsService.update(args)
   }
 
@@ -43,7 +43,7 @@ export class ValetsResolver {
   @Mutation(() => Valet)
   async removeValet(@Args() args: FindUniqueValetArgs, @GetUser() user: GetUserType) {
     const valet = await this.prisma.valet.findUnique(args)
-    checkRowLevelPermission(user, valet.uid)
+    checkRowLevelPermission(user, valet?.uid)
     return this.valetsService.remove(args)
   }
 }

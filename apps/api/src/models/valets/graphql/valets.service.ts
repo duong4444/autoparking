@@ -22,9 +22,9 @@ export class ValetsService {
   }
 
   update(updateValetInput: UpdateValetInput) {
-    const { id, ...data } = updateValetInput
+    const { uid, ...data } = updateValetInput
     return this.prisma.valet.update({
-      where: { id },
+      where: { uid },
       data: data,
     })
   }
