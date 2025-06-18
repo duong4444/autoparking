@@ -6,3 +6,4 @@ export class CreateCompany extends OmitType(CompanyEntity, [
   'updatedAt',
   'id',
 ]) {}
+// displayName? , description?
