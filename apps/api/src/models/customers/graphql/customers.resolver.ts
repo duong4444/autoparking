@@ -34,8 +34,8 @@ export class CustomersResolver {
   @AllowAuthenticated()
   @Mutation(() => Customer)
   async updateCustomer(@Args('updateCustomerInput') args: UpdateCustomerInput, @GetUser() user: GetUserType) {
-    const customer = await this.prisma.customer.findUnique({ where: { id: args.id } })
-    checkRowLevelPermission(user, customer.uid)
+    const customer = await this.prisma.customer.findUnique({ where: { uid: args.uid } })
+    checkRowLevelPermission(user, customer?.uid)
     return this.customersService.update(args)
   }
 
@@ -43,7 +43,7 @@ export class CustomersResolver {
   @Mutation(() => Customer)
   async removeCustomer(@Args() args: FindUniqueCustomerArgs, @GetUser() user: GetUserType) {
     const customer = await this.prisma.customer.findUnique(args)
-    checkRowLevelPermission(user, customer.uid)
+    checkRowLevelPermission(user, customer?.uid)
     return this.customersService.remove(args)
   }
 }

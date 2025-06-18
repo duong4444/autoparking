@@ -1,8 +1,13 @@
-import { Customer } from '@prisma/client'
-import { IsDate, IsString, IsInt } from 'class-validator'
-import { RestrictProperties } from 'src/common/dtos/common.input'
+import { Customer } from '@prisma/client';
+import { IsDate, IsString, IsInt, IsOptional } from 'class-validator';
+import { RestrictProperties } from 'src/common/dtos/common.input';
 
-export class CustomerEntity implements RestrictProperties<CustomerEntity, Customer> {
-
+export class CustomerEntity
+  implements RestrictProperties<CustomerEntity, Customer>
+{
+  createdAt: Date;
+  updatedAt: Date;
+  uid: string;
+  @IsOptional()
+  displayName: string;
 }
-
