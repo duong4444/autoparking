@@ -6,3 +6,4 @@ export class CreateAddress extends OmitType(AddressEntity, [
   'updatedAt',
   'id',
 ]) {}
+// address,lat,lng,garageId

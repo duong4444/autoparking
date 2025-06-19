@@ -4,5 +4,6 @@ import { Address } from '@prisma/client'
 
 export class UpdateAddress extends PartialType(CreateAddress) {
   id: Address['id']
+  //address,lat,lng,garageId, addressId
 }
 
