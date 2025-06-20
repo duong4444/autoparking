@@ -28,7 +28,7 @@ export class ReviewsController {
   @ApiCreatedResponse({ type: ReviewEntity })
   @Post()
   create(@Body() createReviewDto: CreateReview, @GetUser() user: GetUserType) {
-    checkRowLevelPermission(user, createReviewDto.uid)
+    checkRowLevelPermission(user, createReviewDto.customerId)
     return this.prisma.review.create({ data: createReviewDto })
   }
 
@@ -58,7 +58,7 @@ export class ReviewsController {
     @GetUser() user: GetUserType,
   ) {
     const review = await this.prisma.review.findUnique({ where: { id } })
-    checkRowLevelPermission(user, review.uid)
+    checkRowLevelPermission(user, review?.customerId)
     return this.prisma.review.update({
       where: { id },
       data: updateReviewDto,
@@ -70,7 +70,7 @@ export class ReviewsController {
   @Delete(':id')
   async remove(@Param('id') id: number, @GetUser() user: GetUserType) {
     const review = await this.prisma.review.findUnique({ where: { id } })
-    checkRowLevelPermission(user, review.uid)
+    checkRowLevelPermission(user, review?.customerId)
     return this.prisma.review.delete({ where: { id } })
   }
 }

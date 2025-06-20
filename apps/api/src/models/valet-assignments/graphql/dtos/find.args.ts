@@ -10,7 +10,7 @@ registerEnumType(Prisma.ValetAssignmentScalarFieldEnum, {
 
 @ArgsType()
 class FindManyValetAssignmentArgsStrict
-  implements RestrictProperties<FindManyValetAssignmentArgsStrict, Omit<Prisma.ValetAssignmentFindManyArgs, 'include' | 'select'>>
+  implements RestrictProperties<FindManyValetAssignmentArgsStrict, Omit<Prisma.ValetAssignmentFindManyArgs, 'include' | 'select' | 'omit'>>
 {
   where: ValetAssignmentWhereInput
   orderBy: ValetAssignmentOrderByWithRelationInput[]

@@ -3,6 +3,6 @@ import { CreateValetAssignment } from './create.dto'
 import { ValetAssignment } from '@prisma/client'
 
 export class UpdateValetAssignment extends PartialType(CreateValetAssignment) {
-  id: ValetAssignment['id']
+  bookingId: ValetAssignment['bookingId']
 }
 

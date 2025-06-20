@@ -1,20 +1,46 @@
-import { Field, InputType, PartialType } from '@nestjs/graphql'
-import { Prisma } from '@prisma/client'
-import { RestrictProperties } from 'src/common/dtos/common.input'
+import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { Prisma } from '@prisma/client';
+import {
+  DateTimeFilter,
+  FloatFilter,
+  IntFilter,
+  RestrictProperties,
+  StringFilter,
+} from 'src/common/dtos/common.input';
+import { BookingRelationFilter } from 'src/models/bookings/graphql/dtos/where.args';
+import { ValetRelationFilter } from 'src/models/valets/graphql/dtos/where.args';
 
 @InputType()
 export class ValetAssignmentWhereUniqueInput {
-  id: number
+  bookingId: number;
 }
 
 @InputType()
-export class ValetAssignmentWhereInputStrict implements RestrictProperties<ValetAssignmentWhereInputStrict, Prisma.ValetAssignmentWhereInput> {
+export class ValetAssignmentWhereInputStrict
+  implements
+    RestrictProperties<
+      ValetAssignmentWhereInputStrict,
+      Prisma.ValetAssignmentWhereInput
+    >
+{
+  bookingId: IntFilter;
+  createdAt: DateTimeFilter;
+  updatedAt: DateTimeFilter;
+  pickupLat: FloatFilter;
+  pickupLng: FloatFilter;
+  returnLat: FloatFilter;
+  returnLng: FloatFilter;
+  pickupValetId: StringFilter;
+  returnValetId: StringFilter;
+  PickupValet: ValetRelationFilter;
+  ReturnValet: ValetRelationFilter;
+  Booking: BookingRelationFilter;
   // Todo: Add the below field decorator only to the $Enums types.
   // @Field(() => $Enums.x)
 
-  AND: ValetAssignmentWhereInput[]
-  OR: ValetAssignmentWhereInput[]
-  NOT: ValetAssignmentWhereInput[]
+  AND: ValetAssignmentWhereInput[];
+  OR: ValetAssignmentWhereInput[];
+  NOT: ValetAssignmentWhereInput[];
 }
 
 @InputType()
@@ -24,13 +50,13 @@ export class ValetAssignmentWhereInput extends PartialType(
 
 @InputType()
 export class ValetAssignmentListRelationFilter {
-  every?: ValetAssignmentWhereInput
-  some?: ValetAssignmentWhereInput
-  none?: ValetAssignmentWhereInput
+  every?: ValetAssignmentWhereInput;
+  some?: ValetAssignmentWhereInput;
+  none?: ValetAssignmentWhereInput;
 }
 
 @InputType()
 export class ValetAssignmentRelationFilter {
-  is?: ValetAssignmentWhereInput
-  isNot?: ValetAssignmentWhereInput
+  is?: ValetAssignmentWhereInput;
+  isNot?: ValetAssignmentWhereInput;
 }

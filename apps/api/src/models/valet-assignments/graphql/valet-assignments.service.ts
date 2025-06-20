@@ -22,9 +22,9 @@ export class ValetAssignmentsService {
   }
 
   update(updateValetAssignmentInput: UpdateValetAssignmentInput) {
-    const { id, ...data } = updateValetAssignmentInput
+    const { bookingId, ...data } = updateValetAssignmentInput
     return this.prisma.valetAssignment.update({
-      where: { id },
+      where: { bookingId },
       data: data,
     })
   }
