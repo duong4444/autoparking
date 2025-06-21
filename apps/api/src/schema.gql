@@ -8,6 +8,10 @@ type User {
   uid: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  admin: Admin
+  manager: Manager
+  valet: Valet
+  customer: Customer
 }
 
 """

@@ -101,8 +101,8 @@ export class AuthGuard implements CanActivate {
       this.prisma.valet.findUnique({ where: { uid } }),
     ]);
     admin && roles.push('admin');
-    manager && roles.push('admin');
-    valet && roles.push('admin');
+    manager && roles.push('manager');
+    valet && roles.push('valet');
 
     console.log('roles trong getUserRoles ', roles);
 
