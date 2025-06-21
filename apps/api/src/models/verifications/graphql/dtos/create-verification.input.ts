@@ -1,6 +1,9 @@
-import { InputType, PickType } from '@nestjs/graphql'
-import { Verification } from '../entity/verification.entity'
+import { InputType, OmitType } from '@nestjs/graphql';
+import { Verification } from '../entity/verification.entity';
 
 @InputType()
-export class CreateVerificationInput extends PickType(Verification,[],InputType) {}
-
+export class CreateVerificationInput extends OmitType(
+  Verification,
+  ['createdAt','updated','adminId'],
+  InputType,
+) {}

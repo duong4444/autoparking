@@ -10,7 +10,7 @@ registerEnumType(Prisma.VerificationScalarFieldEnum, {
 
 @ArgsType()
 class FindManyVerificationArgsStrict
-  implements RestrictProperties<FindManyVerificationArgsStrict, Omit<Prisma.VerificationFindManyArgs, 'include' | 'select'>>
+  implements RestrictProperties<FindManyVerificationArgsStrict, Omit<Prisma.VerificationFindManyArgs, 'include' | 'select' | 'omit'>>
 {
   where: VerificationWhereInput
   orderBy: VerificationOrderByWithRelationInput[]

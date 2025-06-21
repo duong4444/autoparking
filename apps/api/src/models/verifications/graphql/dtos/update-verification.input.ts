@@ -4,5 +4,5 @@ import { Verification } from '@prisma/client'
 
 @InputType()
 export class UpdateVerificationInput extends PartialType(CreateVerificationInput) {
-  id: Verification['id']
+  garageId: Verification['garageId']
 }
