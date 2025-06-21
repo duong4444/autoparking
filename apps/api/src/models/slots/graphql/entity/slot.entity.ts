@@ -1,6 +1,10 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { $Enums, Slot as SlotType } from '@prisma/client';
 import { RestrictProperties } from 'src/common/dtos/common.input';
+
+registerEnumType($Enums.SlotType, {
+  name: 'SlotType',
+})
 
 @ObjectType()
 export class Slot implements RestrictProperties<Slot, SlotType> {
@@ -9,6 +13,7 @@ export class Slot implements RestrictProperties<Slot, SlotType> {
   updatedAt: Date;
   @Field({ nullable: true })
   displayName: string
+  @Field(() => $Enums.SlotType)
   type: $Enums.SlotType;
   @Field({ nullable: true })
   length: number

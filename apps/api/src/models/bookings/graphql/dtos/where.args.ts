@@ -27,7 +27,7 @@ export class EnumBookingStatusFilter {
 export class BookingWhereInputStrict
   implements
     RestrictProperties<BookingWhereInputStrict, Prisma.BookingWhereInput>
-{
+{ 
   id: IntFilter;
   createdAt: DateTimeFilter;
   updatedAt: DateTimeFilter;

@@ -15,17 +15,17 @@ export class BookingTimelineWhereUniqueInput {
   id: number;
 }
 
-@InputType()
-export class EnumBookingStatusFilter {
-  @Field(() => $Enums.BookingStatus, { nullable: true })
-  equals?: $Enums.BookingStatus;
-  @Field(() => $Enums.BookingStatus, { nullable: true })
-  in?: $Enums.BookingStatus[];
-  @Field(() => $Enums.BookingStatus, { nullable: true })
-  notIn?: $Enums.BookingStatus[];
-  @Field(() => $Enums.BookingStatus, { nullable: true })
-  not?: $Enums.BookingStatus;
-}
+// @InputType()
+// export class EnumBookingStatusFilter {
+//   @Field(() => $Enums.BookingStatus, { nullable: true })
+//   equals?: $Enums.BookingStatus;
+//   @Field(() => $Enums.BookingStatus, { nullable: true })
+//   in?: $Enums.BookingStatus[];
+//   @Field(() => $Enums.BookingStatus, { nullable: true })
+//   notIn?: $Enums.BookingStatus[];
+//   @Field(() => $Enums.BookingStatus, { nullable: true })
+//   not?: $Enums.BookingStatus;
+// }
 
 @InputType()
 export class BookingTimelineWhereInputStrict
@@ -37,7 +37,8 @@ export class BookingTimelineWhereInputStrict
 {
   id: IntFilter;
   timestamp: DateTimeFilter;
-  status: EnumBookingStatusFilter;
+  @Field(() => $Enums.BookingStatus)
+  status: $Enums.BookingStatus
   bookingId: IntFilter;
   valetId: StringFilter;
   managerId: StringFilter;

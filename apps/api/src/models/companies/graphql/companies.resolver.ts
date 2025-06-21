@@ -17,7 +17,7 @@ export class CompaniesResolver {
     private readonly prisma: PrismaService,
   ) {}
 
-  @AllowAuthenticated()
+  @AllowAuthenticated('manager')
   @Mutation(() => Company)
   createCompany(
     @Args('createCompanyInput') args: CreateCompanyInput,

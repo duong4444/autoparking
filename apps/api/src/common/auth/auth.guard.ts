@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
     // lấy req từ context (là obj request chứa headers,user,...)
     const req = ctx.getContext().req;
 
-    await this.authenticateUser(req);
+    await this.authenticateUser(req); // req.user dc gan vs payload , context lay tu metadata
 
     return this.authorizeUser(req, context);
   }
@@ -95,13 +95,15 @@ export class AuthGuard implements CanActivate {
   private async getUserRoles(uid: string): Promise<Role[]> {
     const roles: Role[] = [];
 
-    const rolePromises = [
+    const [admin, manager, valet] = await Promise.all([
       this.prisma.admin.findUnique({ where: { uid } }),
-      // Add promises for other role models here
-    ];
-
-    const [admin] = await Promise.all(rolePromises);
+      this.prisma.manager.findUnique({ where: { uid } }),
+      this.prisma.valet.findUnique({ where: { uid } }),
+    ]);
     admin && roles.push('admin');
+    manager && roles.push('admin');
+    valet && roles.push('admin');
+
     console.log('roles trong getUserRoles ', roles);
 
     return roles;
