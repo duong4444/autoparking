@@ -39,5 +39,6 @@ export class LoginInput extends PickType(RegisterWithCredentialsInput, [
 @ObjectType() //define kieu tra ve trong schema gql 
 export class LoginOutput {
   token: string;
+  user: User
 }
 // <=> type LoginOutput

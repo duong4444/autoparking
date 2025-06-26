@@ -31,6 +31,7 @@ enum AuthProviderType {
 
 type LoginOutput {
   token: String!
+  user: User!
 }
 
 type Admin {

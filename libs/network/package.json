@@ -6,13 +6,16 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/named-operations-object": "^3.1.1",
-    "@graphql-codegen/typed-document-node": "^5.1.1"
+    "@graphql-codegen/typed-document-node": "^5.1.1",
+    "@parcel/watcher": "^2.5.1",
+    "@types/jsonwebtoken": "^9.0.10"
   },
   "scripts": {
     "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.8"
+    "@apollo/client": "^3.13.8",
+    "jsonwebtoken": "^9.0.2"
   },
   "peerDependencies": {
     "react": "^19.1.0"

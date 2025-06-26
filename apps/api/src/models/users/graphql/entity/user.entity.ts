@@ -12,9 +12,9 @@ registerEnumType($Enums.AuthProviderType, {
 @ObjectType()
 export class User implements RestrictProperties<User, UserType> {
   @Field({ nullable: true })
-  image: string;
+  image: string | null;
   @Field({ nullable: true })
-  name: string;
+  name: string | null;
   uid: string;
   createdAt: Date;
   updatedAt: Date;
