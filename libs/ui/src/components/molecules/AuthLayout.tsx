@@ -1,15 +1,15 @@
-'use client'
+'use client';
 // import { CarScene } from '@autospace/3d/src/scenes/CarScene'
 // import { RotatingCamera } from '@autospace/3d/src/components/camera/Rotating'
-import { IconArrowBack } from '@tabler/icons-react'
-import Link from 'next/link'
-import { ReactNode } from 'react'
-import { BrandIcon } from '../atoms/BrandIcon'
+import { IconArrowBack } from '@tabler/icons-react';
+import Link from 'next/link';
+import { ReactNode } from 'react';
+import { BrandIcon } from '../atoms/BrandIcon';
 // import { GoogleButton } from './GoogleButton'
 
 export interface IAuthLayoutProps {
-  children: ReactNode
-  title: string
+  children: ReactNode;
+  title: string;
 }
 
 export const AuthLayout = ({ title, children }: IAuthLayoutProps) => {

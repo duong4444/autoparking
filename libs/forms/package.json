@@ -1,0 +1,11 @@
+{
+  "name": "@autospace/forms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "react-hook-form": "^7.59.0",
+    "zod": "^3.25.67"
+  }
+}

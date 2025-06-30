@@ -1,8 +1,4 @@
 // utility func for making gql req
-
-
-
-
 //dùng để định nghĩa kiểu cho document GraphQL (query/mutation)
 import { TypedDocumentNode } from '@apollo/client/core/types';
 // dùng để chuyển document graphql thành chuỗi query
