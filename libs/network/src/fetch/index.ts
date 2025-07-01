@@ -41,6 +41,8 @@ export async function fetchGraphQL<TData, V>({
 }: GraphqlRequestOptions<TData, V>): Promise<FetchResult<TData>> {
   // chuyển document gql thành chuỗi string
   const query = print(document);
+  console.log("query: trong fetchGQL: ",query);
+  
   // gửi req tới endpoint gql  
   return await fetch(process.env.NEXT_PUBLIC_API_URL + '/graphql', {
     method: 'POST',

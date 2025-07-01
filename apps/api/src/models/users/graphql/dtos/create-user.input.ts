@@ -23,11 +23,13 @@ export class RegisterWithProviderInput extends PickType(
 }
 
 @InputType()
-export class RegisterWithCredentialsInput {
-  name: string;
+export class RegisterWithCredentialsInput extends PickType(
+  User,
+  ['name', 'image'],
+  InputType,
+) {
   email: string;
   password: string;
-  image?: string;
 }
 
 @InputType() // kieu dlieu dau vao // <=> input LoginInput
@@ -36,9 +38,9 @@ export class LoginInput extends PickType(RegisterWithCredentialsInput, [
   'password',
 ]) {}
 
-@ObjectType() //define kieu tra ve trong schema gql 
+@ObjectType() //define kieu tra ve trong schema gql
 export class LoginOutput {
   token: string;
-  user: User
+  user: User;
 }
 // <=> type LoginOutput

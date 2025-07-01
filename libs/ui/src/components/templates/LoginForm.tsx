@@ -27,6 +27,7 @@ export const LoginForm = ({ className }: ILoginFormProps) => {
 
   return (
     <Form
+      // data từ rhf lấy giá trị từ các input trong form(dựa vào thuộc tính name của từng input)
       onSubmit={handleSubmit(async (data) => {
         console.log('data trong loginForm', data);
         const { email, password } = data;
