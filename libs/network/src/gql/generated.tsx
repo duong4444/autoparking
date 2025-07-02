@@ -521,6 +521,11 @@ export type CustomerWhereUniqueInput = {
   uid: Scalars['String']['input'];
 };
 
+export type DateFilterInput = {
+  end: Scalars['String']['input'];
+  start: Scalars['String']['input'];
+};
+
 export type DateTimeFilter = {
   equals?: InputMaybe<Scalars['String']['input']>;
   gt?: InputMaybe<Scalars['String']['input']>;
@@ -557,6 +562,7 @@ export type FloatFilter = {
 export type Garage = {
   __typename?: 'Garage';
   address?: Maybe<Address>;
+  availableSlots: Array<MinimalSlotGroupBy>;
   company: Company;
   companyId: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -564,9 +570,23 @@ export type Garage = {
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
   images: Array<Scalars['String']['output']>;
+  slotCounts: Array<SlotTypeCount>;
   slots: Array<Slot>;
   updatedAt: Scalars['DateTime']['output'];
   verification?: Maybe<Verification>;
+};
+
+
+export type GarageAvailableSlotsArgs = {
+  dateFilter: DateFilterInput;
+  slotsFilter?: InputMaybe<SlotWhereInput>;
+};
+
+export type GarageFilter = {
+  orderBy?: InputMaybe<Array<GarageOrderByWithRelationInput>>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
+  where?: InputMaybe<GarageWhereInput>;
 };
 
 export type GarageListRelationFilter = {
@@ -637,6 +657,13 @@ export type IntFilter = {
   gte?: InputMaybe<Scalars['Int']['input']>;
   lt?: InputMaybe<Scalars['Int']['input']>;
   lte?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type LocationFilterInput = {
+  ne_lat: Scalars['Float']['input'];
+  ne_lng: Scalars['Float']['input'];
+  sw_lat: Scalars['Float']['input'];
+  sw_lng: Scalars['Float']['input'];
 };
 
 export type LoginInput = {
@@ -710,6 +737,13 @@ export type ManagerWhereInput = {
 
 export type ManagerWhereUniqueInput = {
   uid: Scalars['String']['input'];
+};
+
+export type MinimalSlotGroupBy = {
+  __typename?: 'MinimalSlotGroupBy';
+  count: Scalars['Int']['output'];
+  pricePerHour: Scalars['Int']['output'];
+  type: SlotType;
 };
 
 export type Mutation = {
@@ -1001,6 +1035,7 @@ export type Query = {
   managers: Array<Manager>;
   review: Review;
   reviews: Array<Review>;
+  searchGarages: Array<Garage>;
   slot: Slot;
   slots: Array<Slot>;
   user: User;
@@ -1152,6 +1187,14 @@ export type QueryReviewsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   take?: InputMaybe<Scalars['Int']['input']>;
   where?: InputMaybe<ReviewWhereInput>;
+};
+
+
+export type QuerySearchGaragesArgs = {
+  dateFilter: DateFilterInput;
+  garageFilter?: InputMaybe<GarageFilter>;
+  locationFilter: LocationFilterInput;
+  slotsFilter?: InputMaybe<SlotWhereInput>;
 };
 
 
@@ -1375,6 +1418,12 @@ export enum SlotType {
   Car = 'CAR',
   Heavy = 'HEAVY'
 }
+
+export type SlotTypeCount = {
+  __typename?: 'SlotTypeCount';
+  count?: Maybe<Scalars['Int']['output']>;
+  type: SlotType;
+};
 
 export type SlotWhereInput = {
   AND?: InputMaybe<Array<SlotWhereInput>>;
@@ -1835,10 +1884,21 @@ export type CreateUserWithProviderMutationVariables = Exact<{
 
 export type CreateUserWithProviderMutation = { __typename?: 'Mutation', createUserWithProvider: { __typename?: 'User', uid: string } };
 
+export type SearchGaragesQueryVariables = Exact<{
+  dateFilter: DateFilterInput;
+  locationFilter: LocationFilterInput;
+  slotsFilter?: InputMaybe<SlotWhereInput>;
+  garageFilter?: InputMaybe<GarageFilter>;
+}>;
+
+
+export type SearchGaragesQuery = { __typename?: 'Query', searchGarages: Array<{ __typename?: 'Garage', id: number, images: Array<string>, displayName?: string | null, address?: { __typename?: 'Address', lat: number, lng: number, address: string } | null, availableSlots: Array<{ __typename?: 'MinimalSlotGroupBy', type: SlotType, pricePerHour: number, count: number }>, verification?: { __typename?: 'Verification', verified: boolean } | null }> };
+
 export const namedOperations = {
   Query: {
     Companies: 'Companies',
-    GetAuthProvider: 'GetAuthProvider'
+    GetAuthProvider: 'GetAuthProvider',
+    SearchGarages: 'SearchGarages'
   },
   Mutation: {
     CreateUserWithCredentials: 'CreateUserWithCredentials',
@@ -1852,3 +1912,4 @@ export const CompaniesDocument = {"kind":"Document","definitions":[{"kind":"Oper
 export const LoginDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Login"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LoginInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"loginInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"loginInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"image"}}]}}]}}]}}]} as unknown as DocumentNode<LoginMutation, LoginMutationVariables>;
 export const GetAuthProviderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAuthProvider"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"uid"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAuthProvider"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"uid"},"value":{"kind":"Variable","name":{"kind":"Name","value":"uid"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]} as unknown as DocumentNode<GetAuthProviderQuery, GetAuthProviderQueryVariables>;
 export const CreateUserWithProviderDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserWithProvider"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createUserWithProviderInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RegisterWithProviderInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUserWithProvider"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createUserWithProviderInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createUserWithProviderInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}}]}}]}}]} as unknown as DocumentNode<CreateUserWithProviderMutation, CreateUserWithProviderMutationVariables>;
+export const SearchGaragesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchGarages"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateFilter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"DateFilterInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"locationFilter"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LocationFilterInput"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slotsFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SlotWhereInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"garageFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"GarageFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchGarages"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateFilter"}}},{"kind":"Argument","name":{"kind":"Name","value":"locationFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"locationFilter"}}},{"kind":"Argument","name":{"kind":"Name","value":"slotsFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slotsFilter"}}},{"kind":"Argument","name":{"kind":"Name","value":"garageFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"garageFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lat"}},{"kind":"Field","name":{"kind":"Name","value":"lng"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"images"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"availableSlots"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateFilter"}}},{"kind":"Argument","name":{"kind":"Name","value":"slotsFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slotsFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"pricePerHour"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}},{"kind":"Field","name":{"kind":"Name","value":"verification"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"verified"}}]}}]}}]}}]} as unknown as DocumentNode<SearchGaragesQuery, SearchGaragesQueryVariables>;
