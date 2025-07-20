@@ -19,12 +19,12 @@ export class SlotWhereUniqueInput {
 export class EnumSlotTypeFilter {
   @Field(() => $Enums.SlotType, { nullable: true })
   equals?: $Enums.SlotType;
+  @Field(() => [$Enums.SlotType], { nullable: true })
+  in?: $Enums.SlotType[]
+  @Field(() => [$Enums.SlotType], { nullable: true })
+  notIn?: $Enums.SlotType[]
   @Field(() => $Enums.SlotType, { nullable: true })
-  in?: $Enums.SlotType[];
-  @Field(() => $Enums.SlotType, { nullable: true })
-  notIn?: $Enums.SlotType[];
-  @Field(() => $Enums.SlotType, { nullable: true })
-  not?: $Enums.SlotType;
+  not?: $Enums.SlotType
 }
 
 @InputType()

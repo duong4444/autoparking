@@ -13,12 +13,13 @@ import { IconArrowDown } from '@tabler/icons-react';
 import { HtmlInput } from '../atoms/HtmlInput';
 import { toLocalISOString } from '@autospace/util/date';
 import { ShowGarages } from '../organisms/search/ShowGarages';
+import { FilterSidebar } from '../organisms/search/FilterSidebar';
 
 export const SearchPage = () => {
   const { register, setValue, watch } = useFormContext<FormTypeSearchGarage>();
   const formData = watch();
-  console.log("formData trong searchPage: ",formData);
-  
+  console.log('formData trong searchPage: ', formData);
+
   // useCallBack: memoize hàm giữa các lần render ,tránh tạo lại ko cần thiết
   // ViewStateChangeEvent: cấu trúc sự kiện thay đổi trạng thái bản đồ như drag,zoom,...
   const handleMapChange = useCallback(
@@ -49,7 +50,9 @@ export const SearchPage = () => {
       onZoomEnd={(e) => handleMapChange(e.target)}
       initialViewState={initialViewState}
     > 
-    <ShowGarages />
+      {/* Marker */}
+      <ShowGarages />
+      {/* Datetime */}
       <Panel position="left-top">
         <div className="flex flex-col items-stretch">
           <SearchPlaceBox />
@@ -78,8 +81,13 @@ export const SearchPage = () => {
           </div>
         </div>
       </Panel>
+      {/* Zoom in & zoom out */}
       <Panel position="right-center">
         <DefaultZoomControls />
+      </Panel>
+      {/* FilterSideBar */}
+      <Panel position="right-top">
+        <FilterSidebar />
       </Panel>
     </Map>
   );

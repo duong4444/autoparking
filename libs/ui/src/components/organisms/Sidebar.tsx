@@ -41,7 +41,7 @@ export const Sidebar = ({
           </TransitionChild>
         ) : null}
 
-        <div className="fixed inset-y-0 right-0 flex max-w-full bg-amber-100  ">
+        <div className="fixed inset-y-0 right-0 flex max-w-full bg-amber-50  ">
           <TransitionChild
             as={Fragment}
             enter="transform transition ease-in-out duration-150"

@@ -4,7 +4,8 @@ import { FormProviderSearchGarage } from '@autospace/forms/src/searchGarages';
 
 export default function Page() {
   return (
-    <FormProviderSearchGarage>
+    // chỉ là wrapper
+    <FormProviderSearchGarage> 
       <SearchPage />
     </FormProviderSearchGarage>
   );

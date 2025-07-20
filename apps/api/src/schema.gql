@@ -213,8 +213,8 @@ input FloatFilter {
 
 input EnumSlotTypeFilter {
   equals: SlotType
-  in: SlotType
-  notIn: SlotType
+  in: [SlotType!]
+  notIn: [SlotType!]
   not: SlotType
 }
 

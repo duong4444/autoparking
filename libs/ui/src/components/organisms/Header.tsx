@@ -11,6 +11,7 @@ import { Button } from '../atoms/Button';
 // import { useDialogState } from '@autospace/util/hooks/dialog';
 import { NavSidebar } from './NavSidebar';
 import { Menus } from './Menus';
+import { useDialogState } from '@autospace/util/hooks/dialog';
 
 export type IHeaderProps = {
   type?: Role;
@@ -20,7 +21,7 @@ export type IHeaderProps = {
 export const Header = ({ type, menuItems }: IHeaderProps) => {
   const session = useSession();
   const uid = session?.data?.user?.uid;
-//   let [open, setOpen] = useDialogState(false);
+  let [open, setOpen] = useDialogState(false);
 
   return (
     <header>
