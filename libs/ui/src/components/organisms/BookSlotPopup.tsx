@@ -1,6 +1,6 @@
 'use client';
 import { FormTypeBookSlot } from '@autospace/forms/src/bookSlot';
-// import { loadStripe } from '@stripe/stripe-js'
+import { loadStripe } from '@stripe/stripe-js';
 
 import {
   CreateBookingInput,
@@ -17,12 +17,12 @@ import { IconTypes } from '../molecules/IconTypes';
 import { FormError } from '../atoms/FormError';
 import { HtmlInput } from '../atoms/HtmlInput';
 import { toLocalISOString } from '@autospace/util/date';
-// import { useTotalPrice } from '@autospace/util/hooks/price'
-// import { CostTitleValue } from '../molecules/CostTitleValue'
+import { useTotalPrice } from '@autospace/util/hooks/price';
+import { CostTitleValue } from '../molecules/CostTitleValue';
 import { Button } from '../atoms/Button';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-// import { TotalPrice } from '@autospace/util/types'
+import { TotalPrice } from '@autospace/util/types';
 // import { ManageValets } from './ManageValets'
 // import { toast } from '../molecules/Toast'
 
@@ -44,65 +44,85 @@ export const BookSlotPopup = ({
   const { startTime, endTime, phoneNumber, type, valet, vehicleNumber } =
     useWatch<FormTypeBookSlot>();
 
-  // const pricePerHour = garage.availableSlots.find(
-  //   (slot) => slot.type === type,
-  // )?.pricePerHour
+  // "availableSlots": [
+  //       {
+  //         "type": "CAR",
+  //         "pricePerHour": 5,
+  //         "count": 1
+  //       },
+  //       {
+  //         "type": "HEAVY",
+  //         "pricePerHour": 50,
+  //         "count": 1
+  //       },
+  //       {
+  //         "type": "BIKE",
+  //         "pricePerHour": 2,
+  //         "count": 1
+  //       },
+  //       {
+  //         "type": "BICYCLE",
+  //         "pricePerHour": 1,
+  //         "count": 1
+  //       }
+  //     ],
+  const pricePerHour = garage.availableSlots.find(
+    (slot) => slot.type === type,
+  )?.pricePerHour;
 
-  // const totalPriceObj = useTotalPrice({
-  //   pricePerHour,
-  // })
+  const totalPriceObj = useTotalPrice({
+    pricePerHour,
+  });
 
-  // const totalPrice =
-  //   totalPriceObj.parkingCharge +
-  //   totalPriceObj.valetChargeDropoff +
-  //   totalPriceObj.valetChargePickup
+  console.log('totalPriceObj từ hook: ', totalPriceObj);
 
-  // const [booking, setBooking] = useState(false)
+  const totalPrice =
+    totalPriceObj.parkingCharge +
+    totalPriceObj.valetChargeDropoff +
+    totalPriceObj.valetChargePickup;
+
+  const [booking, setBooking] = useState(false);
 
   return (
     <div className="flex gap-2 text-left border-t-2 border-white bg-white/50 backdrop-blur-sm">
       <Form
-      // onSubmit={handleSubmit(async (data) => {
-      //   if (!uid) {
-      //     alert('You are not logged in.')
-      //     return
-      //   }
-      //   const bookingData: CreateBookingInput = {
-      //     phoneNumber: data.phoneNumber,
-      //     customerId: uid,
-      //     endTime: data.endTime,
-      //     startTime: data.startTime,
-      //     type: data.type,
-      //     garageId: garage.id,
-      //     vehicleNumber: data.vehicleNumber,
-      //     totalPrice,
-      //     pricePerHour,
-      //     ...(data.valet?.pickupInfo && data.valet?.dropoffInfo
-      //       ? {
-      //           valetAssignment: {
-      //             pickupLat: data.valet?.pickupInfo?.lat,
-      //             pickupLng: data.valet?.pickupInfo?.lng,
-      //             returnLat: data.valet?.dropoffInfo?.lat,
-      //             returnLng: data.valet?.dropoffInfo?.lng,
-      //           },
-      //         }
-      //       : null),
-      //   }
+        onSubmit={handleSubmit(async (data) => {
+          if (!uid) {
+            alert('You are not logged in.');
+            return;
+          }
+          const bookingData: CreateBookingInput = {
+            phoneNumber: data.phoneNumber,
+            customerId: uid,
+            endTime: data.endTime,
+            startTime: data.startTime,
+            type: data.type,
+            garageId: garage.id,
+            vehicleNumber: data.vehicleNumber,
+            totalPrice,
+            pricePerHour,
+            ...(data.valet?.pickupInfo && data.valet?.dropoffInfo
+              ? {
+                  valetAssignment: {
+                    pickupLat: data.valet?.pickupInfo?.lat,
+                    pickupLng: data.valet?.pickupInfo?.lng,
+                    returnLat: data.valet?.dropoffInfo?.lat,
+                    returnLng: data.valet?.dropoffInfo?.lng,
+                  },
+                }
+              : null),
+          };
 
-      //   try {
-      //     setBooking(true)
-      //     // Create booking session
-      //     const res = await createBookingSession(
-      //       uid!,
-      //       totalPriceObj,
-      //       bookingData,
-      //     )
-      //   } catch (error) {
-      //     toast('An error occurred while creating the booking session.')
-      //   } finally {
-      //     setBooking(false)
-      //   }
-      // })}
+          setBooking(true);
+          // Create booking session
+          const res = await createBookingSession(
+            uid!,
+            totalPriceObj,
+            bookingData,
+          );
+
+          setBooking(false);
+        })}
       >
         <div className="flex items-start gap-2">
           <div className="mb-2 text-lg font-bold">{garage.displayName}</div>
@@ -202,7 +222,7 @@ export const BookSlotPopup = ({
           <HtmlInput placeholder="+910000000000" {...register('phoneNumber')} />
         </HtmlLabel>
         {/* <ManageValets garage={garage} /> */}
-        {/* {totalPriceObj ? (
+        {totalPriceObj ? (
           <div className="mt-4">
             <CostTitleValue
               title="Parking"
@@ -218,45 +238,51 @@ export const BookSlotPopup = ({
             />
             <CostTitleValue title="Total" price={totalPrice} />
           </div>
-        ) : null} */}
-        {/* 
+        ) : null}
         <Button loading={booking} type="submit" className="w-full mt-2">
           Book now
-        </Button> */}
+        </Button>
       </Form>
     </div>
   );
 };
 
-// export const createBookingSession = async (
-//   uid: string,
-//   totalPriceObj: TotalPrice,
-//   bookingData: CreateBookingInput,
-// ) => {
-//   try {
-//     const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/stripe', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         totalPriceObj,
-//         uid,
-//         bookingData,
-//       }),
-//     })
-//     const checkoutSession = await response.json()
+export const createBookingSession = async (
+  uid: string,
+  totalPriceObj: TotalPrice,
+  bookingData: CreateBookingInput,
+) => {
+  try {
+    //NEXT_PUBLIC_API_URL=http://localhost:3000
+    const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/stripe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        totalPriceObj,
+        uid,
+        bookingData,
+      }),
+    });
+    const checkoutSession = await response.json(); // obj { sessionId: session.id }
+    console.log('checkoutSession-FE: ', checkoutSession);
 
-//     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
-//     const stripe = await loadStripe(publishableKey || '')
-//     const result = await stripe?.redirectToCheckout({
-//       sessionId: checkoutSession.sessionId,
-//     })
+    //trả về một instance của Stripe client.
+    const stripe = await loadStripe(publishableKey || '');
+    // redirectToCheckout direct user tới trang thanh toán của Stripe
+    const result = await stripe?.redirectToCheckout({
+      // lấy từ BE
+      sessionId: checkoutSession.sessionId,
+    });
+    console.log("result trả về từ redirectToCheckout: ",result);
+    
 
-//     return result
-//   } catch (error) {
-//     console.error('Error creating booking session:', error)
-//     throw error
-//   }
-// }
+    return result;
+  } catch (error) {
+    console.error('Error creating booking session:', error);
+    throw error;
+  }
+};

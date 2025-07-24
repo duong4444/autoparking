@@ -21,6 +21,7 @@ import { SlotsModule } from './models/slots/slots.module';
 import { ValetAssignmentsModule } from './models/valet-assignments/valet-assignments.module';
 import { VerificationsModule } from './models/verifications/verifications.module';
 import { BookingTimelinesModule } from './models/booking-timelines/booking-timelines.module';
+import { StripeModule } from './models/stripe/stripe.module';
 
 // ROOT MODULE
 
@@ -51,6 +52,7 @@ const MAX_AGE = 24 * 60 * 60;
       // },
     }),
     PrismaModule,
+    StripeModule,
     UsersModule,
     AdminsModule,
     ManagersModule,
