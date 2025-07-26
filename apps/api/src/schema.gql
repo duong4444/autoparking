@@ -642,6 +642,7 @@ type Query {
   bookingTimelines(distinct: [BookingTimelineScalarFieldEnum!], where: BookingTimelineWhereInput, orderBy: [BookingTimelineOrderByWithRelationInput!], cursor: BookingTimelineWhereUniqueInput, take: Float, skip: Float): [BookingTimeline!]!
   bookingTimeline(where: BookingTimelineWhereUniqueInput!): BookingTimeline!
   companies(distinct: [CompanyScalarFieldEnum!], where: CompanyWhereInput, orderBy: [CompanyOrderByWithRelationInput!], cursor: CompanyWhereUniqueInput, take: Float, skip: Float): [Company!]!
+  myCompany: Company!
   company(where: CompanyWhereUniqueInput!): Company!
   garages(distinct: [GarageScalarFieldEnum!], where: GarageWhereInput, orderBy: [GarageOrderByWithRelationInput!], cursor: GarageWhereUniqueInput, take: Float, skip: Float): [Garage!]!
   garage(where: GarageWhereUniqueInput!): Garage!
