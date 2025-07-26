@@ -61,6 +61,7 @@ export class BookingsService {
           pricePerHour,
           totalPrice,
           ...(valetAssignment
+            // thêm data vào bảng ValetAssignment
             ? { ValetAssignment: { create: valetAssignment } }
             : null),
         },

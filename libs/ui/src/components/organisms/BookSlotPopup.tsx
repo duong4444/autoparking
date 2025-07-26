@@ -23,8 +23,8 @@ import { Button } from '../atoms/Button';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { TotalPrice } from '@autospace/util/types';
-// import { ManageValets } from './ManageValets'
-// import { toast } from '../molecules/Toast'
+import { ManageValets } from './ManageValets'
+import { toast } from '../molecules/Toast'
 
 export const BookSlotPopup = ({
   garage,
@@ -216,12 +216,12 @@ export const BookSlotPopup = ({
         </HtmlLabel>
 
         <HtmlLabel title="Vehicle number" error={errors.vehicleNumber?.message}>
-          <HtmlInput placeholder="KA01AB1234" {...register('vehicleNumber')} />
+          <HtmlInput placeholder="Enter vehicle number" {...register('vehicleNumber')} />
         </HtmlLabel>
         <HtmlLabel title="Phone number" error={errors.phoneNumber?.message}>
-          <HtmlInput placeholder="+910000000000" {...register('phoneNumber')} />
+          <HtmlInput placeholder="Enter phone number" {...register('phoneNumber')} />
         </HtmlLabel>
-        {/* <ManageValets garage={garage} /> */}
+        <ManageValets garage={garage} />
         {totalPriceObj ? (
           <div className="mt-4">
             <CostTitleValue
