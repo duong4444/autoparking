@@ -7,25 +7,32 @@ import { UpdateCompanyInput } from './dtos/update-company.input';
 @Injectable()
 export class CompaniesService {
   constructor(private readonly prisma: PrismaService) {}
-  async create({ description, displayName, managerId }: CreateCompanyInput) {
-    const manager = await this.prisma.manager.findFirst({
-      where: {
-      uid: managerId,
-      Company: {
-        NOT: {},
-      },
-      },
-    });
-    if (manager) {
-      throw new BadRequestException(
-        'Manager already belong to another company.',
-      );
-    }
+  async create({
+    description,
+    displayName,
+    managerId,
+    managerName,
+  }: CreateCompanyInput) {
+    console.log('managerId từ CreateCompanyInput: ', managerId);
+
+    // const manager = await this.prisma.manager.findFirst({
+    //   where: {
+    //   uid: managerId,
+    //   Company: {
+    //     NOT: {},
+    //   },
+    //   },
+    // });
+    // if (manager) {
+    //   throw new BadRequestException(
+    //     'Manager already belong to another company.',
+    //   );
+    // }
     return this.prisma.company.create({
       data: {
         description,
         displayName,
-        Managers: { connect: { uid: managerId } },
+        Managers: { create: { displayName: managerName, uid: managerId } },
       },
     });
   }
