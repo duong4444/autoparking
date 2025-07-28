@@ -20,13 +20,17 @@ import { Address } from 'src/models/addresses/graphql/entity/address.entity';
 import { Company } from 'src/models/companies/graphql/entity/company.entity';
 import { Slot } from 'src/models/slots/graphql/entity/slot.entity';
 import { Verification } from 'src/models/verifications/graphql/entity/verification.entity';
-import { LocationFilterInput } from 'src/common/dtos/common.input';
+import {
+  AggregateCountOutput,
+  LocationFilterInput,
+} from 'src/common/dtos/common.input';
 import { SlotWhereInput } from 'src/models/slots/graphql/dtos/where.args';
 import {
   DateFilterInput,
   GarageFilter,
   MinimalSlotGroupBy,
 } from './dtos/search-filter.input';
+import { GarageWhereInput } from './dtos/where.args';
 
 @Resolver(() => Garage)
 export class GaragesResolver {
@@ -261,5 +265,19 @@ export class GaragesResolver {
   @ResolveField(() => [Slot])
   slots(@Parent() garage: Garage) {
     return this.prisma.slot.findMany({ where: { garageId: garage.id } });
+  }
+
+  @Query(() => AggregateCountOutput, {
+    name: 'garagesCount',
+  })
+  async garagesCount(
+    @Args('where', { nullable: true })
+    where: GarageWhereInput,
+  ) {
+    const garages = await this.prisma.garage.aggregate({
+      _count: { _all: true },
+      where,
+    });
+    return { count: garages._count._all };
   }
 }
