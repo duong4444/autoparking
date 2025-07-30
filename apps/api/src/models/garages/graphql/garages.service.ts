@@ -49,6 +49,7 @@ export class GaragesService {
     return slotsByType;
   }
 
+  // des,display,images,address,slot
   async create({
     Address,
     companyId,

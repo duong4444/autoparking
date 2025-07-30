@@ -9,7 +9,9 @@ export class CreateGarageInput extends PickType(
   ['description', 'displayName', 'images'],
   InputType,
 ) {
+  // address,lat,lng
   Address: CreateAddressInputWithoutGarageId;
+  // displayName,pricePerHour,length,width,height,type(enum) + count
   Slots: CreateSlotInputWithoutGarageId[];
 }
 // des,display,images,address,slot

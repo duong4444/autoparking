@@ -24,8 +24,8 @@ export const ListGarages = ({
       where: { companyId: { equals: companyId } },
     },
   });
-  console.log("data trong list garage: ",data);
-  
+  console.log('data trong list garage: ', data);
+
   return (
     <ShowData
       error={error?.message}
@@ -39,17 +39,17 @@ export const ListGarages = ({
         setTake,
       }}
       childrenClassName="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3"
-      // title={
-      //   <div className="flex items-center gap-4">
-      //     <div>Garages</div>
-      //     <Link
-      //       href="/new-garage"
-      //       className="rounded-full border border-black p-0.5"
-      //     >
-      //       <IconPlus />
-      //     </Link>
-      //   </div>
-      // }
+      title={
+        <div className="flex items-center gap-4">
+          <div>Garages</div>
+          <Link
+            href="/new-garage"
+            className="rounded-full border border-black p-0.5"
+          >
+            <IconPlus />
+          </Link>
+        </div>
+      }
     >
       {data?.garages.map((garage) => (
         <div key={garage.id}>{garage.id}</div>
