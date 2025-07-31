@@ -5,7 +5,7 @@ import {
   useFormCreateGarage,
 } from '@autospace/forms/src/createGarage';
 import { useMutation } from '@apollo/client';
-import { useCloudinaryUpload } from '@autospace/util/hooks/cloudinary'
+import { useCloudinaryUpload } from '@autospace/util/hooks/cloudinary';
 import {
   CreateGarageDocument,
   namedOperations,
@@ -27,8 +27,8 @@ import {
   DefaultZoomControls,
 } from '../organisms/map/ZoomControls';
 import { useFormContext } from 'react-hook-form';
-import { GarageMapMarker } from '../organisms/CreateGarageComponents'
-import { ToastContainer, toast } from '../molecules/Toast';
+import { AddSlots, GarageMapMarker } from '../organisms/CreateGarageComponents';
+import { toast } from '../molecules/Toast';
 
 const CreateGarageContent = () => {
   const {
@@ -44,19 +44,19 @@ const CreateGarageContent = () => {
 
   const { images } = watch();
 
-  const { uploading, upload } = useCloudinaryUpload()
+  const { uploading, upload } = useCloudinaryUpload();
 
   const [createGarage, { data, error, loading }] = useMutation(
     CreateGarageDocument,
     {
       refetchQueries: [namedOperations.Query.Garages],
-      // onCompleted: () => {
-      //   reset();
-      //   toast('Garage created successfully.');
-      // },
-      // onError(error, clientOptions) {
-      //   toast('Action failed.');
-      // },
+      onCompleted: () => {
+        reset();
+        toast('Garage created successfully.');
+      },
+      onError(error, clientOptions) {
+        toast('Action failed.');
+      },
     },
   );
 
@@ -64,34 +64,29 @@ const CreateGarageContent = () => {
     <div className="grid md:grid-cols-2 gap-2 mt-2 ">
       <div>
         <Form
-          onSubmit={
-            handleSubmit((data) => {
-              console.log('data: ', data);
-            })
-            // handleSubmit(
-            // async ({
-            //   images,
-            //   description,
-            //   displayName,
-            //   location,
-            //   slotTypes,
-            // }) => {
-            //   const uploadedImages = await upload(images)
+          onSubmit={handleSubmit(
+            async ({
+              images,
+              description,
+              displayName,
+              location,
+              slotTypes,
+            }) => {
+              const uploadedImages = await upload(images);
 
-            //   const result = await createGarage({
-            //     variables: {
-            //       createGarageInput: {
-            //         Address: location,
-            //         images: uploadedImages,
-            //         Slots: slotTypes,
-            //         description,
-            //         displayName,
-            //       },
-            //     },
-            //   })
-            // },
-            // )
-          }
+              const result = await createGarage({
+                variables: {
+                  createGarageInput: {
+                    Address: location,
+                    images: uploadedImages,
+                    Slots: slotTypes,
+                    description,
+                    displayName,
+                  },
+                },
+              });
+            },
+          )}
         >
           <HtmlLabel error={errors.displayName?.message} title="Display Name">
             <HtmlInput {...register('displayName')} placeholder="Garage name" />
@@ -125,7 +120,7 @@ const CreateGarageContent = () => {
               )}
             />
           </ImagePreview>
-          {/* <AddSlots /> */}
+          <AddSlots />
           <Button loading={uploading || loading} type="submit">
             Submit
           </Button>
@@ -134,31 +129,31 @@ const CreateGarageContent = () => {
       <Map
         initialViewState={initialViewState}
         onLoad={(e) => {
-          const { lat, lng } = e.target.getCenter()
-          setValue('location.lat', lat)
-          setValue('location.lng', lng)
+          const { lat, lng } = e.target.getCenter();
+          setValue('location.lat', lat);
+          setValue('location.lng', lng);
         }}
       >
         <GarageMapMarker />
         <Panel position="left-top">
           <SearchPlaceBox
             onLocationChange={(location: ViewState) => {
-              setValue('location.lat', location.latitude)
-              setValue('location.lng', location.longitude)
+              setValue('location.lat', location.latitude);
+              setValue('location.lng', location.longitude);
             }}
           />
           <DefaultZoomControls>
             <CenterOfMap
               onClick={(latLng) => {
-                const lat = parseFloat(latLng.lat.toFixed(8))
-                const lng = parseFloat(latLng.lng.toFixed(8))
+                const lat = parseFloat(latLng.lat.toFixed(8));
+                const lng = parseFloat(latLng.lng.toFixed(8));
 
                 setValue('location.lat', lat, {
                   shouldValidate: true,
-                })
+                });
                 setValue('location.lng', lng, {
                   shouldValidate: true,
-                })
+                });
               }}
             />
           </DefaultZoomControls>
