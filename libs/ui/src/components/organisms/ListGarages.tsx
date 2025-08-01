@@ -9,7 +9,7 @@ import { ShowData } from './ShowData';
 import { dividerClasses } from '@mui/material';
 import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
-// import { GarageCard } from './GarageCard'
+import { GarageCard } from './GarageCard';
 
 export const ListGarages = ({
   companyId,
@@ -52,7 +52,7 @@ export const ListGarages = ({
       }
     >
       {data?.garages.map((garage) => (
-        <div key={garage.id}>{garage.id}</div>
+        <GarageCard key={garage.id} garage={garage} />
       ))}
     </ShowData>
   );

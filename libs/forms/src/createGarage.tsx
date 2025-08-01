@@ -11,10 +11,10 @@ export const formSchemaAddress = z.object({
 })
 
 export const formSchemaCreateSlot = z.object({
-  height: z.number(),
-  width: z.number(),
-  length: z.number(),
-  pricePerHour: z.number(),
+  height: z.number().positive({ message: 'Height must be greater than 0.' }),
+  width: z.number().positive({ message: 'Width must be greater than 0.' }),
+  length: z.number().positive({ message: 'Length must be greater than 0.' }),
+  pricePerHour: z.number().positive({ message: 'Price per hour must be greater than 0.' }),
   count: z.number().min(1).max(20, { message: 'Maximum 20.' }),
   type: z.nativeEnum(SlotType),
 })

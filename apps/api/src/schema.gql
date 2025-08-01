@@ -601,6 +601,10 @@ type Slot {
   bookings: [Booking!]!
 }
 
+type ReturnCount {
+  count: Float!
+}
+
 type BookingTimeline {
   status: BookingStatus!
   valetId: String
@@ -1120,6 +1124,7 @@ type Mutation {
   updateReview(updateReviewInput: UpdateReviewInput!): Review!
   removeReview(where: ReviewWhereUniqueInput!): Review!
   createSlot(createSlotInput: CreateSlotInput!): Slot!
+  createManySlots(createSlotInput: CreateSlotInput!, count: Float!): ReturnCount!
   updateSlot(updateSlotInput: UpdateSlotInput!): Slot!
   removeSlot(where: SlotWhereUniqueInput!): Slot!
   createValetAssignment(createValetAssignmentInput: CreateValetAssignmentInput!): ValetAssignment!
