@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { BookingsService } from './bookings.service';
 import { Booking } from './entity/booking.entity';
 import { FindManyBookingArgs, FindUniqueBookingArgs } from './dtos/find.args';
@@ -12,6 +19,9 @@ import { Slot } from 'src/models/slots/graphql/entity/slot.entity';
 import { Customer } from 'src/models/customers/graphql/entity/customer.entity';
 import { BookingTimeline } from 'src/models/booking-timelines/graphql/entity/booking-timeline.entity';
 import { ValetAssignment } from 'src/models/valet-assignments/graphql/entity/valet-assignment.entity';
+import { BadRequestException } from '@nestjs/common';
+import { AggregateCountOutput } from 'src/common/dtos/common.input';
+import { BookingWhereInput } from './dtos/where.args';
 
 @Resolver(() => Booking)
 export class BookingsResolver {
@@ -30,9 +40,61 @@ export class BookingsResolver {
     return this.bookingsService.create(args);
   }
 
+  @AllowAuthenticated('admin')
   @Query(() => [Booking], { name: 'bookings' })
   findAll(@Args() args: FindManyBookingArgs) {
     return this.bookingsService.findAll(args);
+  }
+
+  @AllowAuthenticated('manager', 'admin')
+  @Query(() => [Booking], { name: 'bookingsForGarage' })
+  async bookingsForGarage(
+    @Args()
+    { cursor, distinct, orderBy, skip, take, where }: FindManyBookingArgs,
+    @Args('garageId') garageId: number,
+    @GetUser() user: GetUserType,
+  ) {
+    // const garageId = where.Slot.is.garageId.equals
+    // if (!garageId) {
+    //   throw new BadRequestException('Pass garage id in where.Slot.is.garageId')
+    // }
+    const garage = await this.prisma.garage.findUnique({
+      where: { id: garageId },
+      include: { Company: { include: { Managers: true } } },
+    });
+
+    checkRowLevelPermission(
+      user,
+      garage?.Company.Managers.map((manager) => manager.uid),
+    );
+
+    return this.bookingsService.findAll({
+      cursor,
+      distinct,
+      orderBy,
+      skip,
+      take,
+      where: {
+        ...where,
+        Slot: { is: { garageId: { equals: garageId } } },
+      },
+    });
+  }
+
+  @Query(() => AggregateCountOutput)
+  async bookingsCount(
+    @Args('where', { nullable: true })
+    where: BookingWhereInput,
+  ) {
+    // aggregate() là phương thức cho phép thực hiện
+    // các phép tính tổng hợp: count, sum, avg, min, max,...
+    const bookings = await this.prisma.booking.aggregate({
+      // dùng điều kiện lọc.
+      where,
+      // yêu cầu Prisma đếm tất cả các dòng khớp với điều kiện.
+      _count: { _all: true },
+    });
+    return { count: bookings._count._all };
   }
 
   @Query(() => Booking, { name: 'booking' })

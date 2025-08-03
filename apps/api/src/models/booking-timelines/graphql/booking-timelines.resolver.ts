@@ -19,7 +19,7 @@ export class BookingTimelinesResolver {
     private readonly prisma: PrismaService,
   ) {}
 
-  @AllowAuthenticated()
+  @AllowAuthenticated('admin', 'manager')
   @Mutation(() => BookingTimeline)
   async createBookingTimeline(
     @Args('createBookingTimelineInput')
@@ -82,9 +82,7 @@ export class BookingTimelinesResolver {
 
   @AllowAuthenticated('admin')
   @Mutation(() => BookingTimeline)
-  async removeBookingTimeline(
-    @Args() args: FindUniqueBookingTimelineArgs,
-  ) {
+  async removeBookingTimeline(@Args() args: FindUniqueBookingTimelineArgs) {
     return this.bookingTimelinesService.remove(args);
   }
 }
