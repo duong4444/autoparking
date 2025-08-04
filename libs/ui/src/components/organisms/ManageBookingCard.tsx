@@ -1,12 +1,12 @@
-import { BookingsForGarageQuery } from '@autospace/network/src/gql/generated';
-import { TitleStrongValue, TitleValue } from '../atoms/TitleValue';
-import { Reveal } from '../molecules/Reveal';
-import { StartEndDateCard } from './DateCard';
-import { Accordion } from '../atoms/Accordion';
-import { format } from 'date-fns';
+import { BookingsForGarageQuery } from '@autospace/network/src/gql/generated'
+import { TitleStrongValue, TitleValue } from '../atoms/TitleValue'
+import { Reveal } from '../molecules/Reveal'
+import { StartEndDateCard } from './DateCard'
+import { Accordion } from '../atoms/Accordion'
+import { format } from 'date-fns'
 
 export interface IManageBookingCardProps {
-  booking: BookingsForGarageQuery['bookingsForGarage'][0];
+  booking: BookingsForGarageQuery['bookingsForGarage'][0]
 }
 
 export const ManageBookingCard = ({ booking }: IManageBookingCardProps) => {
@@ -20,19 +20,15 @@ export const ManageBookingCard = ({ booking }: IManageBookingCardProps) => {
           <TitleValue title={'Slot'}>{booking.slot.displayName}</TitleValue>
         </div>
       </div>
-      <TitleStrongValue title={'Status'}>
-        <div className="font-bold">{booking.status.split('_').join(' ')}</div>
-      </TitleStrongValue>
-      <TitleStrongValue title={'Code'}>
-        <Reveal showIntruction={true} secret={booking.passcode || ''} />
-      </TitleStrongValue>
-
       <StartEndDateCard
         startTime={booking.startTime}
         endTime={booking.endTime}
       />
+      <TitleStrongValue title={'Code'}>
+        <Reveal showIntruction={false} secret={booking.passcode || ''} />
+      </TitleStrongValue>
 
-      {/* <Accordion
+      <Accordion
         defaultOpen={false}
         title={
           <TitleStrongValue title={'Status'}>
@@ -51,7 +47,7 @@ export const ManageBookingCard = ({ booking }: IManageBookingCardProps) => {
             </div>
           ))}
         </div>
-      </Accordion> */}
+      </Accordion>
     </div>
-  );
-};
+  )
+}
