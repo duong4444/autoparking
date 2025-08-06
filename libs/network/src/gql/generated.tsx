@@ -449,8 +449,8 @@ export type CreateSlotInputWithoutGarageId = {
 
 export type CreateValetAssignmentInput = {
   bookingId: Scalars['Float']['input'];
-  pickupLat?: InputMaybe<Scalars['Float']['input']>;
-  pickupLng?: InputMaybe<Scalars['Float']['input']>;
+  pickupLat: Scalars['Float']['input'];
+  pickupLng: Scalars['Float']['input'];
   pickupValetId?: InputMaybe<Scalars['String']['input']>;
   returnLat?: InputMaybe<Scalars['Float']['input']>;
   returnLng?: InputMaybe<Scalars['Float']['input']>;
@@ -1062,7 +1062,11 @@ export type Query = {
   valet: Valet;
   valetAssignment: ValetAssignment;
   valetAssignments: Array<ValetAssignment>;
+  valetDrops: Array<Booking>;
+  valetDropsTotal: Scalars['Float']['output'];
   valetMe?: Maybe<Valet>;
+  valetPickups: Array<Booking>;
+  valetPickupsTotal: Scalars['Float']['output'];
   valets: Array<Valet>;
   verification: Verification;
   verifications: Array<Verification>;
@@ -1311,6 +1315,18 @@ export type QueryValetAssignmentsArgs = {
   skip?: InputMaybe<Scalars['Float']['input']>;
   take?: InputMaybe<Scalars['Float']['input']>;
   where?: InputMaybe<ValetAssignmentWhereInput>;
+};
+
+
+export type QueryValetDropsArgs = {
+  skip?: InputMaybe<Scalars['Float']['input']>;
+  take?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryValetPickupsArgs = {
+  skip?: InputMaybe<Scalars['Float']['input']>;
+  take?: InputMaybe<Scalars['Float']['input']>;
 };
 
 
@@ -1719,8 +1735,8 @@ export type ValetAssignment = {
   __typename?: 'ValetAssignment';
   bookingId: Scalars['Float']['output'];
   createdAt: Scalars['DateTime']['output'];
-  pickupLat?: Maybe<Scalars['Float']['output']>;
-  pickupLng?: Maybe<Scalars['Float']['output']>;
+  pickupLat: Scalars['Float']['output'];
+  pickupLng: Scalars['Float']['output'];
   pickupValet?: Maybe<Valet>;
   pickupValetId?: Maybe<Scalars['String']['output']>;
   returnLat?: Maybe<Scalars['Float']['output']>;
@@ -2063,6 +2079,22 @@ export type CompanyValetsQueryVariables = Exact<{
 
 export type CompanyValetsQuery = { __typename?: 'Query', companyValetsTotal: number, companyValets: Array<{ __typename?: 'Valet', displayName: string, uid: string, createdAt: any, updatedAt: any, companyId?: number | null, image?: string | null, licenceID: string }> };
 
+export type ValetPickupsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Float']['input']>;
+  take?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type ValetPickupsQuery = { __typename?: 'Query', valetPickupsTotal: number, valetPickups: Array<{ __typename?: 'Booking', id: number, vehicleNumber: string, startTime: any, endTime: any, valetAssignment?: { __typename?: 'ValetAssignment', pickupLat: number, pickupLng: number, pickupValetId?: string | null } | null, slot: { __typename?: 'Slot', garage: { __typename?: 'Garage', address?: { __typename?: 'Address', lat: number, lng: number } | null } } }> };
+
+export type ValetDropsQueryVariables = Exact<{
+  skip?: InputMaybe<Scalars['Float']['input']>;
+  take?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type ValetDropsQuery = { __typename?: 'Query', valetDropsTotal: number, valetDrops: Array<{ __typename?: 'Booking', id: number, vehicleNumber: string, startTime: any, endTime: any, valetAssignment?: { __typename?: 'ValetAssignment', returnLat?: number | null, returnLng?: number | null, returnValetId?: string | null } | null, slot: { __typename?: 'Slot', garage: { __typename?: 'Garage', address?: { __typename?: 'Address', lat: number, lng: number } | null } } }> };
+
 export const namedOperations = {
   Query: {
     Companies: 'Companies',
@@ -2073,7 +2105,9 @@ export const namedOperations = {
     BookingsForCustomer: 'BookingsForCustomer',
     BookingsForGarage: 'BookingsForGarage',
     ValetMe: 'ValetMe',
-    companyValets: 'companyValets'
+    companyValets: 'companyValets',
+    valetPickups: 'valetPickups',
+    valetDrops: 'valetDrops'
   },
   Mutation: {
     CreateUserWithCredentials: 'CreateUserWithCredentials',
@@ -2109,3 +2143,5 @@ export const CreateBookingTimelineDocument = {"kind":"Document","definitions":[{
 export const ValetMeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"ValetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"valetMe"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"companyId"}}]}}]}}]} as unknown as DocumentNode<ValetMeQuery, ValetMeQueryVariables>;
 export const CreateValetDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateValet"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"createValetInput"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateValetInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createValet"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"createValetInput"},"value":{"kind":"Variable","name":{"kind":"Name","value":"createValetInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uid"}}]}}]}}]} as unknown as DocumentNode<CreateValetMutation, CreateValetMutationVariables>;
 export const CompanyValetsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"companyValets"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"distinct"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ValetScalarFieldEnum"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ValetWhereUniqueInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ValetOrderByWithRelationInput"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ValetWhereInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"companyValets"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct"},"value":{"kind":"Variable","name":{"kind":"Name","value":"distinct"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"uid"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"companyId"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"licenceID"}}]}},{"kind":"Field","name":{"kind":"Name","value":"companyValetsTotal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}]}]}}]} as unknown as DocumentNode<CompanyValetsQuery, CompanyValetsQueryVariables>;
+export const ValetPickupsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"valetPickups"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"valetPickups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vehicleNumber"}},{"kind":"Field","name":{"kind":"Name","value":"valetAssignment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pickupLat"}},{"kind":"Field","name":{"kind":"Name","value":"pickupLng"}},{"kind":"Field","name":{"kind":"Name","value":"pickupValetId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"slot"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"garage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lat"}},{"kind":"Field","name":{"kind":"Name","value":"lng"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"valetPickupsTotal"}}]}}]} as unknown as DocumentNode<ValetPickupsQuery, ValetPickupsQueryVariables>;
+export const ValetDropsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"valetDrops"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"valetDrops"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"vehicleNumber"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"valetAssignment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"returnLat"}},{"kind":"Field","name":{"kind":"Name","value":"returnLng"}},{"kind":"Field","name":{"kind":"Name","value":"returnValetId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"slot"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"garage"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"lat"}},{"kind":"Field","name":{"kind":"Name","value":"lng"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"valetDropsTotal"}}]}}]} as unknown as DocumentNode<ValetDropsQuery, ValetDropsQueryVariables>;

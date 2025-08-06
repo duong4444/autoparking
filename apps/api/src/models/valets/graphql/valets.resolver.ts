@@ -10,6 +10,8 @@ import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { BadGatewayException } from '@nestjs/common';
 import { ValetWhereInput } from './dtos/where.args';
+import { Booking } from 'src/models/bookings/graphql/entity/booking.entity';
+import { PaginationInput } from 'src/common/dtos/common.input';
 
 @Resolver(() => Valet)
 export class ValetsResolver {
@@ -27,12 +29,107 @@ export class ValetsResolver {
     // tìm cpn gắn vs logged_in_manager
     const company = await this.prisma.company.findFirst({
       where: { Managers: { some: { uid: user.uid } } },
-    })
+    });
 
     if (!company) {
-      throw new BadGatewayException('You do not have a company.')
+      throw new BadGatewayException('You do not have a company.');
     }
-    return this.valetsService.create({ ...args, companyId: company.id })
+    return this.valetsService.create({ ...args, companyId: company.id });
+  }
+
+  @AllowAuthenticated('valet')
+  @Query(() => [Booking], { name: 'valetPickups' })
+  async valetPickups(
+    @Args() { skip, take }: PaginationInput,
+    @GetUser() user: GetUserType,
+  ) {
+    // check logged_in_user có là valet ko?
+    const valet = await this.valetsService.validValet(user.uid);
+    return this.prisma.booking.findMany({
+      skip,
+      take,
+      where: {
+        // Slot của booking thuộc về garage của cpn của valet
+        Slot: {
+          Garage:
+            valet?.companyId !== null
+              ? { companyId: valet.companyId }
+              : undefined,
+        },
+        // có pickupLat nhưng chưa có valet nào nhận
+        ValetAssignment: {
+          pickupLat: { not: undefined },
+          pickupValetId: null,
+        },
+      },
+    });
+  }
+
+  @AllowAuthenticated()
+  @Query(() => Number)
+  async valetPickupsTotal(@GetUser() user: GetUserType) {
+    const valet = await this.valetsService.validValet(user.uid);
+    return this.prisma.booking.count({
+      where: {
+        Slot: {
+          Garage:
+            valet?.companyId !== null
+              ? { companyId: valet.companyId }
+              : undefined,
+        },
+        ValetAssignment: {
+          pickupLat: { not: undefined },
+          pickupValetId: null,
+        },
+      },
+    });
+  }
+
+  @AllowAuthenticated()
+  @Query(() => [Booking], { name: 'valetDrops' })
+  async valetDrops(
+    @Args() { skip, take }: PaginationInput,
+    @GetUser() user: GetUserType,
+  ) {
+    const valet = await this.valetsService.validValet(user.uid);
+
+    return this.prisma.booking.findMany({
+      skip,
+      take,
+      where: {
+        Slot: {
+          Garage:
+            valet?.companyId !== null
+              ? { companyId: valet.companyId }
+              : undefined,
+        },
+        ValetAssignment: {
+          // có returnLat nhưng chưa valet nào nhận
+          returnLat: { not: null },
+          returnValetId: null,
+        },
+      },
+    });
+  }
+
+  @AllowAuthenticated()
+  @Query(() => Number)
+  async valetDropsTotal(@GetUser() user: GetUserType) {
+    const valet = await this.valetsService.validValet(user.uid);
+    return this.prisma.booking.count({
+      where: {
+        Slot: {
+          Garage:
+            valet?.companyId !== null
+              ? { companyId: valet.companyId }
+              : undefined,
+        },
+        ValetAssignment: {
+          returnLat: { not: null },
+          returnValetId: null,
+        },
+      },
+    });
   }
 
   @Query(() => [Valet], { name: 'valets' })
@@ -65,7 +162,6 @@ export class ValetsResolver {
     return this.valetsService.findOne({ where: { uid: user.uid } });
   }
 
-  
   @AllowAuthenticated('manager', 'admin')
   @Query(() => [Valet], { name: 'companyValets' })
   async companyValets(
@@ -76,32 +172,30 @@ export class ValetsResolver {
     // tìm cpn ứng vs logged_in_manager
     const company = await this.prisma.company.findFirst({
       where: { Managers: { some: { uid: user.uid } } },
-    })
+    });
 
     // return tất cả valet ứng vs cpn của manager
     return this.valetsService.findAll({
       ...args,
       where: { ...args.where, companyId: { equals: company?.id } },
-    })
+    });
   }
 
-  
   @AllowAuthenticated()
   @Query(() => Number)
   async companyValetsTotal(
     @Args('where', { nullable: true }) where: ValetWhereInput,
     @GetUser() user: GetUserType,
   ) {
-
     // tìm cpn ứng vs manager
     const company = await this.prisma.company.findFirst({
       where: { Managers: { some: { uid: user.uid } } },
-    })
+    });
 
     // tổng số valet thuộc cpn của manager
     return this.prisma.valet.count({
       where: { ...where, companyId: { equals: company?.id } },
-    })
+    });
   }
 
   @AllowAuthenticated()
