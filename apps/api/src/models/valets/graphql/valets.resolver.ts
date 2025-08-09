@@ -12,6 +12,7 @@ import { BadGatewayException } from '@nestjs/common';
 import { ValetWhereInput } from './dtos/where.args';
 import { Booking } from 'src/models/bookings/graphql/entity/booking.entity';
 import { PaginationInput } from 'src/common/dtos/common.input';
+import { BookingStatus } from '@prisma/client';
 
 @Resolver(() => Valet)
 export class ValetsResolver {
@@ -35,6 +36,66 @@ export class ValetsResolver {
       throw new BadGatewayException('You do not have a company.');
     }
     return this.valetsService.create({ ...args, companyId: company.id });
+  }
+
+  @AllowAuthenticated()
+  @Mutation(() => Booking)
+  async assignValet(
+    @Args('bookingId') bookingId: number,
+    @Args('status') status: BookingStatus,
+    @GetUser() user: GetUserType,
+  ) {
+    const booking = await this.prisma.booking.findUnique({
+      where: { id: bookingId },
+      select: {
+        Slot: {
+          select: {
+            Garage: {
+              select: {
+                Company: { select: { Managers: true, Valets: true } },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!booking) {
+      throw new BadGatewayException('Booking not found.');
+    }
+
+    checkRowLevelPermission(user, [
+      ...booking.Slot.Garage.Company.Managers.map((manager) => manager.uid),
+      ...booking.Slot.Garage.Company.Valets.map((valet) => valet.uid),
+    ]);
+
+    const [updatedBooking, bookingTimeline] = await this.prisma.$transaction([
+      this.prisma.booking.update({
+        where: { id: bookingId },
+        data: {
+          status,
+          ...(status === BookingStatus.VALET_ASSIGNED_FOR_CHECK_IN && {
+            ValetAssignment: {
+              update: { pickupValetId: user.uid },
+            },
+          }),
+          ...(status === BookingStatus.VALET_ASSIGNED_FOR_CHECK_OUT && {
+            ValetAssignment: {
+              update: { returnValetId: user.uid },
+            },
+          }),
+        },
+      }),
+      this.prisma.bookingTimeline.create({
+        data: {
+          bookingId,
+          valetId: user.uid,
+          status,
+        },
+      }),
+    ]);
+
+    return updatedBooking;
   }
 
   @AllowAuthenticated('valet')
