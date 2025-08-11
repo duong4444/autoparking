@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { AdminsService } from './admins.service';
 import { Admin } from './entity/admin.entity';
 import { FindManyAdminArgs, FindUniqueAdminArgs } from './dtos/find.args';
@@ -10,7 +17,10 @@ import { AllowAuthenticated, GetUser } from 'src/common/auth/auth.decorator';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { User } from 'src/models/users/graphql/entity/user.entity';
 import { Verification } from 'src/models/verifications/graphql/entity/verification.entity';
+import { AdminWhereInput } from './dtos/where.args';
+import { BadRequestException } from '@nestjs/common';
 
+@AllowAuthenticated('admin')
 @Resolver(() => Admin)
 export class AdminsResolver {
   constructor(
@@ -18,7 +28,6 @@ export class AdminsResolver {
     private readonly prisma: PrismaService,
   ) {}
 
-  @AllowAuthenticated()
   @Mutation(() => Admin)
   createAdmin(
     @Args('createAdminInput') args: CreateAdminInput,
@@ -38,27 +47,33 @@ export class AdminsResolver {
     return this.adminsService.findOne(args);
   }
 
-  @AllowAuthenticated()
+  @Query(() => Admin, { name: 'adminMe' })
+  adminMe(@GetUser() user: GetUserType) {
+    return this.adminsService.findOne({ where: { uid: user.uid } });
+  }
+
   @Mutation(() => Admin)
   async updateAdmin(
     @Args('updateAdminInput') args: UpdateAdminInput,
     @GetUser() user: GetUserType,
   ) {
-    const adminInfo = await this.prisma.admin.findUnique({
+    const admin = await this.prisma.admin.findUnique({
       where: { uid: args.uid },
     });
-    checkRowLevelPermission(user, adminInfo?.uid);
+    checkRowLevelPermission(user, admin?.uid);
     return this.adminsService.update(args);
   }
 
-  @AllowAuthenticated()
   @Mutation(() => Admin)
   async removeAdmin(
     @Args() args: FindUniqueAdminArgs,
     @GetUser() user: GetUserType,
   ) {
-    const adminInfo = await this.prisma.admin.findUnique(args);
-    checkRowLevelPermission(user, adminInfo?.uid);
+    const admin = await this.prisma.admin.findUnique(args);
+    checkRowLevelPermission(user, admin?.uid);
+    if (admin?.uid === user.uid) {
+      throw new BadRequestException("Can not delete your self")
+    }
     return this.adminsService.remove(args);
   }
 
@@ -78,6 +93,18 @@ export class AdminsResolver {
   async verificationsCount(@Parent() parent: Admin) {
     return this.prisma.verification.count({
       where: { adminId: parent.uid },
+    });
+  }
+
+  @Query(() => Number, {
+    name: 'adminsCount',
+  })
+  async adminsCount(
+    @Args('where', { nullable: true })
+    where: AdminWhereInput,
+  ) {
+    return this.prisma.admin.count({
+      where,
     });
   }
 }

@@ -637,6 +637,8 @@ type Query {
   getAuthProvider(uid: String!): AuthProvider
   admins(distinct: [AdminScalarFieldEnum!], where: AdminWhereInput, orderBy: [AdminOrderByWithRelationInput!], cursor: AdminWhereUniqueInput, take: Float, skip: Float): [Admin!]!
   admin(where: AdminWhereUniqueInput!): Admin!
+  adminMe: Admin!
+  adminsCount(where: AdminWhereInput): Float!
   managers(distinct: [ManagerScalarFieldEnum!], where: ManagerWhereInput, orderBy: [ManagerOrderByWithRelationInput!], cursor: ManagerWhereUniqueInput, take: Float, skip: Float): [Manager!]!
   manager(where: ManagerWhereUniqueInput!): Manager!
   valetPickups(take: Float, skip: Float): [Booking!]!

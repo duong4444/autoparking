@@ -286,6 +286,12 @@ query ValetMe {
   }
 }
 
+query AdminMe {
+  adminMe {
+    uid
+  }
+}
+
 mutation CreateValet($createValetInput: CreateValetInput!) {
   createValet(createValetInput: $createValetInput) {
     uid
@@ -438,5 +444,76 @@ query myDropTrips(
   }
   bookingsCount(where: $where) {
     count
+  }
+}
+
+mutation CreateVerification(
+  $createVerificationInput: CreateVerificationInput!
+) {
+  createVerification(createVerificationInput: $createVerificationInput) {
+    adminId
+    createdAt
+    garageId
+    updated
+    verified
+  }
+}
+
+mutation RemoveVerification($where: VerificationWhereUniqueInput!) {
+  removeVerification(where: $where) {
+    adminId
+    createdAt
+    garageId
+    updated
+    verified
+  }
+}
+
+query admins(
+  $distinct: [AdminScalarFieldEnum!]
+  $skip: Float
+  $take: Float
+  $cursor: AdminWhereUniqueInput
+  $orderBy: [AdminOrderByWithRelationInput!]
+  $where: AdminWhereInput
+) {
+  admins(
+    distinct: $distinct
+    skip: $skip
+    take: $take
+    cursor: $cursor
+    orderBy: $orderBy
+    where: $where
+  ) {
+    uid
+    updatedAt
+    user {
+      name
+    }
+    createdAt
+    verificationsCount
+  }
+  adminsCount(where: $where)
+}
+
+mutation RemoveAdmin($where: AdminWhereUniqueInput!) {
+  removeAdmin(where: $where) {
+    createdAt
+    user {
+      name
+    }
+    updatedAt
+    uid
+  }
+}
+
+mutation CreateAdmin($createAdminInput: CreateAdminInput!) {
+  createAdmin(createAdminInput: $createAdminInput) {
+    createdAt
+    user {
+      name
+    }
+    uid
+    updatedAt
   }
 }
