@@ -1,14 +1,15 @@
-// import { signIn } from 'next-auth/react'
+import { signIn } from 'next-auth/react';
+import { IconBrandGoogle } from '@tabler/icons-react';
 
 export const GoogleButton = () => {
   return (
     <button
       onClick={() => {
-        console.log('button google');
+        signIn('google', { callbackUrl: '/' });
       }}
-      className="text-lg hover:shadow-lg transition-shadow flex items-center justify-center w-8 h-8 border border-[#ea4335] rounded-full"
+      className="text-lg transition-shadow flex items-center justify-center w-8 h-8 border border-[#ea4335] rounded-full"
     >
-      G
+      <IconBrandGoogle />
     </button>
   );
 };

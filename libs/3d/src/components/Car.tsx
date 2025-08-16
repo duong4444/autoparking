@@ -78,7 +78,7 @@ export const Car: React.FC<CarProps> = ({
         >
           <div
             style={{
-              color: '#2e3b30',
+              color: '#993c77',
               fontSize: '.75rem',
               outline: 1,
               outlineColor: 'black',

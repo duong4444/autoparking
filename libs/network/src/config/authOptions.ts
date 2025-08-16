@@ -18,8 +18,18 @@ export const authOptions: NextAuthOptions = {
   providers: [
     // Google OAuth provider configuration
     GoogleProvider({
+      // The public identifier for your application registered with Google
       clientId: process.env.GOOGLE_CLIENT_ID!,
+      // The private key that verifies your application's identity
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          // defines what user information your application is requesting
+          // openid: Enables OpenID Connect authentication
+          // profile: Requests access to basic profile information
+          scope: 'openid profile',
+        },
+      },
     }),
     // Credentials provider configuration for email/password authentication
     CredentialsProvider({

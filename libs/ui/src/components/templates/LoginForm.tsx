@@ -7,6 +7,7 @@ import { Button } from '../atoms/Button';
 import Link from 'next/link';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 export interface ILoginFormProps {
   className?: string;
 }
@@ -22,6 +23,7 @@ export const LoginForm = ({ className }: ILoginFormProps) => {
   } = useFormLogin();
 
   const { replace } = useRouter();
+  const [loading,setLoading] = useState(false)
 
   console.log('err in login form: ', errors);
 
@@ -33,14 +35,13 @@ export const LoginForm = ({ className }: ILoginFormProps) => {
         const { email, password } = data;
         console.log("email trong loginForm",email);
         console.log("pwd trong loginForm",password);
-        
-        
+        setLoading(true)
         const result = await signIn('credentials', {
           email,
           password,
           redirect: false,
         });
-
+        setLoading(false)
         console.log("result trong loginForm: ",result);
         
 
@@ -64,7 +65,7 @@ export const LoginForm = ({ className }: ILoginFormProps) => {
           className='text-black'
         />
       </HtmlLabel>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" loading={loading}>Submit</Button>
       <div className="mt-4 text-sm">
         Do not have an autoparking account?
         <br />

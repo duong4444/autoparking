@@ -6,6 +6,7 @@ const nextConfig = {
       // Tên domain được phép load ảnh
       { hostname: 'api.mapbox.com' },
       { hostname: 'res.cloudinary.com' },
+      { hostname: 'lh3.googleusercontent.com' },
     ],
   },
 }
