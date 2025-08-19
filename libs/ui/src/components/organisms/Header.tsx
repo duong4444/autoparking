@@ -4,14 +4,9 @@ import { Brand } from '../atoms/Brand';
 import { Container } from '../atoms/Container';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { Sidebar } from './Sidebar';
-import { UserInfo } from '../molecules/UserInfo';
-import { LogoutButton } from '../molecules/LogoutButton';
 import { Button } from '../atoms/Button';
-// import { useDialogState } from '@autospace/util/hooks/dialog';
 import { NavSidebar } from './NavSidebar';
 import { Menus } from './Menus';
-import { useDialogState } from '@autospace/util/hooks/dialog';
 
 export type IHeaderProps = {
   type?: Role;
@@ -21,7 +16,6 @@ export type IHeaderProps = {
 export const Header = ({ type, menuItems }: IHeaderProps) => {
   const session = useSession();
   const uid = session?.data?.user?.uid;
-  let [open, setOpen] = useDialogState(false);
 
   return (
     <header>

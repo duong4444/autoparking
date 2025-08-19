@@ -16,7 +16,13 @@ import { ShowGarages } from '../organisms/search/ShowGarages';
 import { FilterSidebar } from '../organisms/search/FilterSidebar';
 
 export const SearchPage = () => {
-  const { register, setValue, watch } = useFormContext<FormTypeSearchGarage>();
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+    trigger,
+  } = useFormContext<FormTypeSearchGarage>();
   const formData = watch();
   console.log('formData trong searchPage: ', formData);
 
@@ -49,7 +55,7 @@ export const SearchPage = () => {
       onDragEnd={(e) => handleMapChange(e.target)}
       onZoomEnd={(e) => handleMapChange(e.target)}
       initialViewState={initialViewState}
-    > 
+    >
       {/* Marker */}
       <ShowGarages />
       {/* Datetime */}
@@ -66,7 +72,12 @@ export const SearchPage = () => {
                 type="datetime-local"
                 className="w-full p-2 text-lg font-light border-0"
                 min={toLocalISOString(new Date()).slice(0, 16)}
-                {...register('startTime')}
+                {...register('startTime', {
+                  onChange(event) {
+                    trigger('startTime');
+                    trigger('endTime');
+                  },
+                })}
               />
             </div>
             <div className="flex gap-1 items-center">
@@ -75,7 +86,11 @@ export const SearchPage = () => {
                 min={toLocalISOString(new Date()).slice(0, 16)}
                 type="datetime-local"
                 className="w-full p-2 text-lg font-light border-0"
-                {...register('endTime')}
+                {...register('endTime', {
+                  onChange(event) {
+                    trigger('endTime');
+                  },
+                })}
               />
             </div>
           </div>
@@ -85,6 +100,17 @@ export const SearchPage = () => {
       <Panel position="right-center">
         <DefaultZoomControls />
       </Panel>
+      {errors ? (
+        <Panel position="center-bottom">
+          {Object.entries(errors).map(([key, value]) => {
+            return (
+              <div className="text-red-800 p-2 shadow bg-white" key={key}>
+                {key}: {value.message}
+              </div>
+            );
+          })}
+        </Panel>
+      ) : null}
       {/* FilterSideBar */}
       <Panel position="right-top">
         <FilterSidebar />

@@ -23,8 +23,8 @@ import { Button } from '../atoms/Button';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { TotalPrice } from '@autospace/util/types';
-import { ManageValets } from './ManageValets'
-import { toast } from '../molecules/Toast'
+import { ManageValets } from './ManageValets';
+import { toast } from '../molecules/Toast';
 
 export const BookSlotPopup = ({
   garage,
@@ -44,28 +44,6 @@ export const BookSlotPopup = ({
   const { startTime, endTime, phoneNumber, type, valet, vehicleNumber } =
     useWatch<FormTypeBookSlot>();
 
-  // "availableSlots": [
-  //       {
-  //         "type": "CAR",
-  //         "pricePerHour": 5,
-  //         "count": 1
-  //       },
-  //       {
-  //         "type": "HEAVY",
-  //         "pricePerHour": 50,
-  //         "count": 1
-  //       },
-  //       {
-  //         "type": "BIKE",
-  //         "pricePerHour": 2,
-  //         "count": 1
-  //       },
-  //       {
-  //         "type": "BICYCLE",
-  //         "pricePerHour": 1,
-  //         "count": 1
-  //       }
-  //     ],
   const pricePerHour = garage.availableSlots.find(
     (slot) => slot.type === type,
   )?.pricePerHour;
@@ -73,8 +51,6 @@ export const BookSlotPopup = ({
   const totalPriceObj = useTotalPrice({
     pricePerHour,
   });
-
-  console.log('totalPriceObj từ hook: ', totalPriceObj);
 
   const totalPrice =
     totalPriceObj.parkingCharge +
@@ -113,15 +89,19 @@ export const BookSlotPopup = ({
               : null),
           };
 
-          setBooking(true);
-          // Create booking session
-          const res = await createBookingSession(
-            uid!,
-            totalPriceObj,
-            bookingData,
-          );
-
-          setBooking(false);
+          try {
+            setBooking(true);
+            // Create booking session
+            const res = await createBookingSession(
+              uid!,
+              totalPriceObj,
+              bookingData,
+            );
+          } catch (error) {
+            toast('An error occurred while creating the booking session.');
+          } finally {
+            setBooking(false);
+          }
         })}
       >
         <div className="flex items-start gap-2">

@@ -42,6 +42,9 @@ export const useConvertSearchFormToVariables = () => {
 
   const hasErrors = Object.keys(errors).length !== 0
 
+  console.log("hasError: ",hasErrors);
+  
+
   useEffect(() => {
     // destruct từ debounce 
     const {
@@ -121,7 +124,7 @@ export const createGaragesFilter = (
   formData: FormData,
 ) => {
   const skip = (dirtyFields.skip && formData.skip) || 0
-  const take = (dirtyFields.take && formData.take) || 10
+  const take = (dirtyFields.take && formData.take) || 50
 
   return {
     ...(skip && { skip }),
